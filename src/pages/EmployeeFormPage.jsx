@@ -3,6 +3,8 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { employeesApi } from '../api/employees';
 import { departmentsApi } from '../api/departments';
+import { useToast } from '../context/ToastContext';
+import { getErrorMessage, normalizeValidationErrors } from '../utils/errors';
 import Spinner from '../components/Spinner';
 
 const emptyForm = {
@@ -14,6 +16,7 @@ export default function EmployeeFormPage() {
   const { id } = useParams();
   const isEditing = !!id;
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [departments, setDepartments] = useState([]);
   const [form, setForm] = useState(emptyForm);
@@ -23,7 +26,7 @@ export default function EmployeeFormPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    departmentsApi.getAll().then(setDepartments).catch(() => {});
+    departmentsApi.getAll().then(setDepartments).catch((err) => showToast(getErrorMessage(err, 'No se pudieron cargar los departamentos.'), 'error'));
   }, []);
 
   useEffect(() => {
@@ -42,8 +45,11 @@ export default function EmployeeFormPage() {
         isActive: emp.isActive,
       });
       setLoading(false);
+    }).catch((err) => {
+      showToast(getErrorMessage(err, 'No se pudo cargar la información del empleado.'), 'error');
+      navigate('/empleados');
     });
-  }, [id, isEditing]);
+  }, [id, isEditing, navigate, showToast]);
 
   function handleChange(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -70,17 +76,15 @@ export default function EmployeeFormPage() {
       } else {
         await employeesApi.create(payload);
       }
+      showToast(isEditing ? 'Empleado actualizado correctamente.' : 'Empleado creado correctamente.', 'success');
       navigate('/empleados');
     } catch (err) {
       const data = err.response?.data;
       if (data?.validationErrors) {
-        const normalized = {};
-        Object.entries(data.validationErrors).forEach(([k, v]) => {
-          normalized[k.charAt(0).toLowerCase() + k.slice(1)] = v[0];
-        });
-        setErrors(normalized);
+        setErrors(normalizeValidationErrors(data.validationErrors));
+        setGeneralError('Revisa los campos marcados abajo.');
       } else {
-        setGeneralError(data?.message || 'No se pudo guardar el empleado.');
+        setGeneralError(getErrorMessage(err, 'No se pudo guardar el empleado.'));
       }
     } finally {
       setSaving(false);
@@ -153,7 +157,7 @@ export default function EmployeeFormPage() {
           <Link to="/empleados" className="rounded-md px-4 py-2.5 text-sm text-paper-100/70 transition hover:text-paper-100">
             Cancelar
           </Link>
-          <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-ink-950 transition hover:bg-gold-400 disabled:opacity-60">
+          <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
             {saving && <Spinner size={16} />}
             {isEditing ? 'Guardar cambios' : 'Crear empleado'}
           </button>

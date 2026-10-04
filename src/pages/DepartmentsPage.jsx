@@ -2,11 +2,14 @@ import { useEffect, useState, useCallback } from 'react';
 import { Plus, Pencil, Trash2, AlertCircle, X } from 'lucide-react';
 import { departmentsApi } from '../api/departments';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
 import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function DepartmentsPage() {
   const { isAdmin } = useAuth();
+  const { showToast } = useToast();
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // null = cerrado, {} = nuevo, {id,...} = editar
@@ -17,26 +20,28 @@ export default function DepartmentsPage() {
     setLoading(true);
     departmentsApi.getAll()
       .then(setDepartments)
-      .catch(() => setError('No se pudieron cargar los departamentos.'))
+      .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar los departamentos.')))
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => { load(); }, [load]);
 
   async function confirmDelete() {
+    const departmentName = toDelete.name;
     try {
       await departmentsApi.remove(toDelete.id);
       setToDelete(null);
+      showToast(`Departamento "${departmentName}" eliminado.`, 'success');
       load();
     } catch (err) {
-      setError(err.response?.data?.message || 'No se pudo eliminar el departamento.');
+      showToast(getErrorMessage(err, 'No se pudo eliminar el departamento.'), 'error');
       setToDelete(null);
     }
   }
 
   return (
     <div>
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-paper-100">Departamentos</h1>
           <p className="mt-1 text-sm text-paper-100/50">{departments.length} registrados</p>
@@ -44,7 +49,7 @@ export default function DepartmentsPage() {
         {isAdmin && (
           <button
             onClick={() => setEditing({ name: '', description: '' })}
-            className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-ink-950 transition hover:bg-gold-400"
+            className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
           >
             <Plus className="h-4 w-4" strokeWidth={2} />
             Nuevo departamento
@@ -88,6 +93,7 @@ export default function DepartmentsPage() {
           initial={editing}
           onClose={() => setEditing(null)}
           onSaved={() => { setEditing(null); load(); }}
+          showToast={showToast}
         />
       )}
 
@@ -104,7 +110,7 @@ export default function DepartmentsPage() {
   );
 }
 
-function DepartmentModal({ initial, onClose, onSaved }) {
+function DepartmentModal({ initial, onClose, onSaved, showToast }) {
   const [name, setName] = useState(initial.name || '');
   const [description, setDescription] = useState(initial.description || '');
   const [error, setError] = useState('');
@@ -118,19 +124,21 @@ function DepartmentModal({ initial, onClose, onSaved }) {
     try {
       if (isEditing) {
         await departmentsApi.update(initial.id, { name, description });
+        showToast('Departamento actualizado correctamente.', 'success');
       } else {
         await departmentsApi.create({ name, description });
+        showToast('Departamento creado correctamente.', 'success');
       }
       onSaved();
     } catch (err) {
-      setError(err.response?.data?.message || 'No se pudo guardar el departamento.');
+      setError(getErrorMessage(err, 'No se pudo guardar el departamento.'));
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/70 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
       <div className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6">
         <div className="mb-5 flex items-center justify-between">
           <h3 className="font-display text-lg text-paper-100">{isEditing ? 'Editar departamento' : 'Nuevo departamento'}</h3>
@@ -159,7 +167,7 @@ function DepartmentModal({ initial, onClose, onSaved }) {
             <button type="button" onClick={onClose} className="rounded-md px-4 py-2 text-sm text-paper-100/70 transition hover:text-paper-100">
               Cancelar
             </button>
-            <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2 text-sm font-medium text-ink-950 transition hover:bg-gold-400 disabled:opacity-60">
+            <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
               {saving && <Spinner size={16} />}
               Guardar
             </button>

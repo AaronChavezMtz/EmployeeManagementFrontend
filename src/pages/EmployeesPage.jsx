@@ -1,9 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, ChevronLeft, ChevronRight, FileSpreadsheet } from 'lucide-react';
 import { employeesApi } from '../api/employees';
 import { departmentsApi } from '../api/departments';
+import { reportsApi } from '../api/reports';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -11,11 +14,13 @@ const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: '
 
 export default function EmployeesPage() {
   const { isAdmin } = useAuth();
+  const { showToast } = useToast();
   const [departments, setDepartments] = useState([]);
   const [data, setData] = useState({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [toDelete, setToDelete] = useState(null);
+  const [exporting, setExporting] = useState(false);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -28,7 +33,7 @@ export default function EmployeesPage() {
   });
 
   useEffect(() => {
-    departmentsApi.getAll().then(setDepartments).catch(() => {});
+    departmentsApi.getAll().then(setDepartments).catch((err) => showToast(getErrorMessage(err, 'No se pudieron cargar los departamentos.'), 'error'));
   }, []);
 
   const loadEmployees = useCallback(() => {
@@ -48,7 +53,7 @@ export default function EmployeesPage() {
         setData(result);
         setError('');
       })
-      .catch(() => setError('No se pudieron cargar los empleados.'))
+      .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar los empleados.')))
       .finally(() => setLoading(false));
   }, [filters]);
 
@@ -61,32 +66,61 @@ export default function EmployeesPage() {
     setFilters((f) => ({ ...f, [key]: value, pageNumber: key === 'pageNumber' ? value : 1 }));
   }
 
+  async function handleExport() {
+    setExporting(true);
+    try {
+      await reportsApi.exportEmployeesExcel({
+        search: filters.search || undefined,
+        departmentId: filters.departmentId || undefined,
+        isActive: filters.isActive === '' ? undefined : filters.isActive === 'true',
+        sortBy: filters.sortBy,
+        descending: filters.descending,
+      });
+    } catch (err) {
+      showToast(getErrorMessage(err, 'No se pudo generar el Excel.'), 'error');
+    } finally {
+      setExporting(false);
+    }
+  }
+
   async function confirmDelete() {
+    const employeeName = toDelete.fullName;
     try {
       await employeesApi.remove(toDelete.id);
       setToDelete(null);
+      showToast(`${employeeName} fue dado de baja.`, 'success');
       loadEmployees();
-    } catch {
-      setError('No se pudo dar de baja al empleado.');
+    } catch (err) {
+      showToast(getErrorMessage(err, 'No se pudo dar de baja al empleado.'), 'error');
       setToDelete(null);
     }
   }
 
   return (
     <div>
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-paper-100">Empleados</h1>
           <p className="mt-1 text-sm text-paper-100/50">{data.totalCount} registrados</p>
         </div>
         {isAdmin && (
-          <Link
-            to="/empleados/nuevo"
-            className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-ink-950 transition hover:bg-gold-400"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2} />
-            Nuevo empleado
-          </Link>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
+            >
+              {exporting ? <Spinner size={14} /> : <FileSpreadsheet className="h-4 w-4" strokeWidth={1.75} />}
+              Excel
+            </button>
+            <Link
+              to="/empleados/nuevo"
+              className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2} />
+              Nuevo empleado
+            </Link>
+          </div>
         )}
       </header>
 
@@ -137,8 +171,8 @@ export default function EmployeesPage() {
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
-      <div className="overflow-hidden rounded-lg border border-ink-700 bg-ink-900">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
+        <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
               <th className="px-5 py-3 font-normal">Nombre</th>
@@ -158,7 +192,9 @@ export default function EmployeesPage() {
               data.items.map((emp) => (
                 <tr key={emp.id} className="border-b border-ink-700/60 last:border-0 hover:bg-ink-800/50">
                   <td className="px-5 py-3">
-                    <p className="text-paper-100">{emp.fullName}</p>
+                    <Link to={`/empleados/${emp.id}`} className="text-paper-100 transition hover:text-gold-600">
+                      {emp.fullName}
+                    </Link>
                     <p className="text-xs text-paper-100/40">{emp.email}</p>
                   </td>
                   <td className="px-5 py-3 text-paper-100/70">{emp.departmentName}</td>
