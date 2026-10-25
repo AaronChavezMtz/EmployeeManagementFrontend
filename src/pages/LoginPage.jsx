@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner';
 import { getErrorMessage } from '../utils/errors';
 
 const demoAccounts = [
-  { role: 'Administrador', username: 'admin', password: '123_RHSystem', icon: ShieldAlert, note: 'Acceso completo: crear, editar, eliminar' },
+  { role: 'Administrador', username: 'adminprueba', password: '123_Prueba', icon: ShieldAlert, note: 'Acceso completo: crear, editar, eliminar' },
   { role: 'Solo lectura', username: 'usuariolector', password: 'lector_123', icon: Eye, note: 'Solo puede consultar información' },
 ];
 
@@ -69,7 +69,7 @@ export default function LoginPage() {
               <input
                 id="username" type="text" required autoFocus
                 value={username} onChange={(e) => setUsername(e.target.value)}
-                className="input" placeholder="Ingrese su usuario"
+                className="input" placeholder="adminprueba"
               />
             </div>
             <div>
