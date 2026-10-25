@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import { ShieldCheck, Eye, Plus, AlertCircle, X } from 'lucide-react';
+import { ShieldCheck, Eye, Plus, AlertCircle, X, RotateCcw, Lock } from 'lucide-react';
 import { usersApi } from '../api/users';
+import { demoApi } from '../api/demo';
+import ConfirmDialog from '../components/ConfirmDialog';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
@@ -13,6 +15,9 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showNew, setShowNew] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [canResetDemo, setCanResetDemo] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -23,6 +28,11 @@ export default function UsersPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // Solo las cuentas privadas del dueño pueden reiniciar la demo; para el resto el botón no aparece.
+  useEffect(() => {
+    demoApi.status().then((s) => setCanResetDemo(s.canReset)).catch(() => setCanResetDemo(false));
+  }, []);
 
   async function toggleRole(u) {
     const newRole = u.role === 'Admin' ? 'Viewer' : 'Admin';
@@ -45,6 +55,23 @@ export default function UsersPage() {
     }
   }
 
+  async function resetDemo() {
+    setConfirmReset(false);
+    setResetting(true);
+    try {
+      await demoApi.reset();
+      // Recarga completa: empleados, departamentos y KPIs cambiaron. Si tu cuenta no
+      // estaba protegida, se borró y la API responderá 401, que te manda al login.
+      window.location.reload();
+    } catch (err) {
+      const message = err.response?.status === 404
+        ? 'El reinicio de la demo no está habilitado en este servidor.'
+        : getErrorMessage(err, 'No se pudo reiniciar la demo.');
+      showToast(message, 'error');
+      setResetting(false);
+    }
+  }
+
   return (
     <div>
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -52,13 +79,25 @@ export default function UsersPage() {
           <h1 className="font-display text-3xl text-paper-100">Usuarios</h1>
           <p className="mt-1 text-sm text-paper-100/50">Quién puede entrar al sistema y con qué permisos</p>
         </div>
-        <button
-          onClick={() => setShowNew(true)}
-          className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
-        >
-          <Plus className="h-4 w-4" strokeWidth={2} />
-          Nuevo usuario
-        </button>
+        <div className="flex flex-wrap gap-2">
+          {canResetDemo && (
+            <button
+              onClick={() => setConfirmReset(true)}
+              disabled={resetting}
+              className="flex items-center gap-2 rounded-md border border-ink-600 px-4 py-2.5 text-sm font-medium text-paper-100/70 transition hover:border-clay-500 hover:text-clay-500 disabled:opacity-60"
+            >
+              {resetting ? <Spinner size={16} /> : <RotateCcw className="h-4 w-4" strokeWidth={2} />}
+              Reiniciar demo
+            </button>
+          )}
+          <button
+            onClick={() => setShowNew(true)}
+            className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2} />
+            Nuevo usuario
+          </button>
+        </div>
       </header>
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
@@ -79,20 +118,26 @@ export default function UsersPage() {
             ) : (
               users.map((u) => {
                 const isSelf = u.username === currentUser?.username;
+                const locked = isSelf || u.isProtected;
+                const lockedTitle = u.isProtected ? 'Cuenta de demostración protegida' : 'No puedes cambiar tu propia cuenta';
                 return (
                   <tr key={u.id} className="border-b border-ink-700/60 last:border-0">
                     <td className="px-5 py-3 text-paper-100">
-                      {u.username} {isSelf && <span className="text-xs text-paper-100/40">(tú)</span>}
+                      <span className="flex items-center gap-1.5">
+                        {u.username}
+                        {isSelf && <span className="text-xs text-paper-100/40">(tú)</span>}
+                        {u.isProtected && <Lock className="h-3.5 w-3.5 text-paper-100/40" strokeWidth={1.75} aria-label="Cuenta protegida" />}
+                      </span>
                     </td>
                     <td className="px-5 py-3 text-paper-100/70">{u.email}</td>
                     <td className="px-5 py-3">
                       <button
                         onClick={() => toggleRole(u)}
-                        disabled={isSelf}
+                        disabled={locked}
                         className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition disabled:cursor-not-allowed disabled:opacity-60 ${
                           u.role === 'Admin' ? 'bg-gold-500/10 text-gold-600' : 'bg-ink-700 text-paper-100/60'
                         }`}
-                        title={isSelf ? 'No puedes cambiar tu propio rol' : 'Clic para cambiar de rol'}
+                        title={locked ? lockedTitle : 'Clic para cambiar de rol'}
                       >
                         {u.role === 'Admin' ? <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.75} /> : <Eye className="h-3.5 w-3.5" strokeWidth={1.75} />}
                         {u.role === 'Admin' ? 'Administrador' : 'Solo lectura'}
@@ -101,7 +146,8 @@ export default function UsersPage() {
                     <td className="px-5 py-3">
                       <button
                         onClick={() => toggleActive(u)}
-                        disabled={isSelf}
+                        disabled={locked}
+                        title={locked ? lockedTitle : 'Clic para activar o desactivar'}
                         className={`rounded-full px-2.5 py-1 text-xs transition disabled:cursor-not-allowed disabled:opacity-60 ${
                           u.isActive ? 'bg-sage-500/15 text-sage-600' : 'bg-ink-700 text-paper-100/40'
                         }`}
@@ -116,6 +162,16 @@ export default function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={confirmReset}
+        title="Reiniciar demo"
+        message="Se borrarán todos los empleados, departamentos e historial, y los usuarios que no sean cuentas de demostración. Luego se cargarán los datos de ejemplo. ¿Continuar?"
+        confirmLabel="Reiniciar"
+        danger
+        onConfirm={resetDemo}
+        onCancel={() => setConfirmReset(false)}
+      />
 
       {showNew && <NewUserModal onClose={() => setShowNew(false)} onCreated={() => { setShowNew(false); load(); }} showToast={showToast} />}
     </div>
