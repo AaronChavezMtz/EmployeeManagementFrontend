@@ -14,7 +14,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 >
 > | Rol | Usuario | Contraseña | Permisos |
 > |---|---|---|---|
-> | Administrador | `admin` | `123_RHSystem` | Acceso completo: crear, editar y eliminar |
+> | Administrador | `adminprueba` | `123_Prueba` | Acceso completo: crear, editar y eliminar |
 > | Solo lectura | `usuariolector` | `lector_123` | Solo puede consultar información |
 >
 > *Nota: la API corre en un plan gratuito y puede tardar ~30-60 s en responder la primera vez. Los datos de la demo son ficticios; no registres información real.*
