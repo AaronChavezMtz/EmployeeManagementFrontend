@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Pencil, Mail, Phone, Briefcase, Calendar, Building2, DollarSign, UserX } from 'lucide-react';
+import { ArrowLeft, Pencil, Mail, Phone, Briefcase, Calendar, Building2, DollarSign, UserX, KeyRound } from 'lucide-react';
+import CredentialsDialog from '../components/CredentialsDialog';
+import { useToast } from '../context/ToastContext';
 import HistoryTimeline from '../components/HistoryTimeline';
 import { terminationReasons, formatDate } from '../utils/labels';
 import { employeesApi } from '../api/employees';
@@ -17,7 +19,7 @@ function InfoRow({ icon: Icon, label, value }) {
       <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-paper-100/40" strokeWidth={1.75} />
       <div>
         <p className="text-xs text-paper-100/40">{label}</p>
-        <p className="text-sm text-paper-100">{value}</p>
+        <div className="text-sm text-paper-100">{value}</div>
       </div>
     </div>
   );
@@ -29,12 +31,28 @@ export default function EmployeeDetailPage() {
   const [employee, setEmployee] = useState(null);
   const [history, setHistory] = useState(null);
   const [error, setError] = useState('');
+  const [creatingAccess, setCreatingAccess] = useState(false);
+  const [createdAccess, setCreatedAccess] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     Promise.all([employeesApi.getById(id), employeesApi.getHistory(id)])
       .then(([emp, hist]) => { setEmployee(emp); setHistory(hist); })
       .catch((err) => setError(getErrorMessage(err, 'No se pudo cargar la información del empleado.')));
   }, [id]);
+
+  async function createAccess() {
+    setCreatingAccess(true);
+    try {
+      const access = await employeesApi.createPortalAccess(employee.id);
+      setEmployee({ ...employee, portalUsername: access.username });
+      setCreatedAccess(access);
+    } catch (err) {
+      showToast(getErrorMessage(err, 'No se pudo crear el acceso al portal.'), 'error');
+    } finally {
+      setCreatingAccess(false);
+    }
+  }
 
   if (error) return <p className="text-sm text-clay-500">{error}</p>;
   if (!employee) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
@@ -73,6 +91,16 @@ export default function EmployeeDetailPage() {
           <InfoRow icon={Building2} label="Departamento" value={employee.departmentName} />
           <InfoRow icon={Calendar} label="Fecha de contratación" value={formatDate(employee.hireDate)} />
           <InfoRow icon={DollarSign} label="Salario mensual" value={currency.format(employee.salary)} />
+          <InfoRow icon={KeyRound} label="Acceso al portal" value={
+            employee.portalUsername ? (
+              employee.portalUsername
+            ) : employee.isActive && isAdmin ? (
+              <button onClick={createAccess} disabled={creatingAccess}
+                className="text-sm font-medium text-gold-500 transition hover:text-gold-400 disabled:opacity-60">
+                {creatingAccess ? 'Creando...' : 'Crear acceso al portal'}
+              </button>
+            ) : 'Sin acceso'
+          } />
           {!employee.isActive && employee.terminationDate && (
             <InfoRow
               icon={UserX}
@@ -84,6 +112,8 @@ export default function EmployeeDetailPage() {
       </div>
 
       <HistoryTimeline history={history} subtitle="Cambios registrados sobre este empleado" />
+
+      <CredentialsDialog access={createdAccess} employeeName={employee.fullName} onClose={() => setCreatedAccess(null)} />
     </div>
   );
 }
