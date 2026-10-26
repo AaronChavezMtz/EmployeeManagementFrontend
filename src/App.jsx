@@ -13,6 +13,7 @@ import UsersPage from './pages/UsersPage';
 import MyProfilePage from './pages/MyProfilePage';
 import MyLeavePage from './pages/MyLeavePage';
 import LeaveRequestsPage from './pages/LeaveRequestsPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 
 export default function App() {
   return (
@@ -21,6 +22,10 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+
+            <Route element={<ProtectedRoute passwordPage />}>
+              <Route path="/cambiar-contrasena" element={<ChangePasswordPage />} />
+            </Route>
 
             <Route element={<ProtectedRoute role="Admin" />}>
               <Route element={<Layout />}>
