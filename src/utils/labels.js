@@ -1,0 +1,20 @@
+// Textos en español para los enums que devuelve la API (llegan como texto: "Resignation", ...).
+export const terminationReasons = {
+  Resignation: 'Renuncia',
+  Dismissal: 'Despido',
+  ContractEnd: 'Término de contrato',
+  Other: 'Otro',
+};
+
+// Fecha de hoy en formato yyyy-MM-dd (lo que usa <input type="date">), en hora local.
+export function todayInputValue() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// La API devuelve fechas sin zona ("2026-03-01T00:00:00"); se muestran tal cual, sin desfase de zona horaria.
+export function formatDate(value) {
+  if (!value) return '—';
+  const [y, m, d] = value.slice(0, 10).split('-').map(Number);
+  return new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium' }).format(new Date(y, m - 1, d));
+}

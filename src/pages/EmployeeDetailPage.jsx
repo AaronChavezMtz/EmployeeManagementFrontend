@@ -4,13 +4,13 @@ import {
   ArrowLeft, Pencil, Mail, Phone, Briefcase, Calendar, Building2,
   UserPlus, PencilLine, ArrowRightLeft, DollarSign, UserCheck, UserX,
 } from 'lucide-react';
+import { terminationReasons, formatDate } from '../utils/labels';
 import { employeesApi } from '../api/employees';
 import { useAuth } from '../context/AuthContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
-const dateFmt = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium' });
 const dateTimeFmt = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
 
 const historyMeta = {
@@ -82,8 +82,15 @@ export default function EmployeeDetailPage() {
           <InfoRow icon={Phone} label="Teléfono" value={employee.phone || '—'} />
           <InfoRow icon={Briefcase} label="Puesto" value={employee.position} />
           <InfoRow icon={Building2} label="Departamento" value={employee.departmentName} />
-          <InfoRow icon={Calendar} label="Fecha de contratación" value={dateFmt.format(new Date(employee.hireDate))} />
+          <InfoRow icon={Calendar} label="Fecha de contratación" value={formatDate(employee.hireDate)} />
           <InfoRow icon={DollarSign} label="Salario mensual" value={currency.format(employee.salary)} />
+          {!employee.isActive && employee.terminationDate && (
+            <InfoRow
+              icon={UserX}
+              label="Baja"
+              value={`${formatDate(employee.terminationDate)} · ${terminationReasons[employee.terminationReason] ?? 'Otro'}`}
+            />
+          )}
         </div>
       </div>
 
