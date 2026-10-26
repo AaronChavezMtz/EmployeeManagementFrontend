@@ -42,7 +42,7 @@ export default function EmployeeDetailPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([employeesApi.getById(id), employeesApi.getHistory?.(id) ?? Promise.resolve([])])
+    Promise.all([employeesApi.getById(id), employeesApi.getHistory(id)])
       .then(([emp, hist]) => { setEmployee(emp); setHistory(hist); })
       .catch((err) => setError(getErrorMessage(err, 'No se pudo cargar la información del empleado.')));
   }, [id]);
