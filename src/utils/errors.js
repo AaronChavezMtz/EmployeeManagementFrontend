@@ -1,11 +1,13 @@
-// Traduce un error de axios a un mensaje entendible
+// Traduce un error de axios a un mensaje entendible, distinguiendo el caso
+// real que detectamos: "el backend no respondió" (API apagada, sin internet,
+// CORS mal configurado) vs. "el backend respondió con un error" (401, 400, etc).
 export function getErrorMessage(error, fallback = 'Ocurrió un error inesperado.') {
   // Sin response = la petición nunca llegó a buen puerto (red, servidor caído, CORS).
   if (!error?.response) {
     if (error?.code === 'ECONNABORTED') {
       return 'El servidor tardó demasiado en responder. Inténtalo de nuevo en unos momentos.';
     }
-    return 'Error de conexión con el servidor. Verifica tu conexión a internet o inténtalo de nuevo más tarde.';
+    return 'No se pudo conectar con el servidor. Verifica que la API esté en ejecución o tu conexión a internet.';
   }
 
   const { status, data } = error.response;

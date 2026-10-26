@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Plus, Pencil, Trash2, AlertCircle, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertCircle, X, LayoutGrid, Network } from 'lucide-react';
 import { departmentsApi } from '../api/departments';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
 import ConfirmDialog from '../components/ConfirmDialog';
+import OrgChart from '../components/OrgChart';
 
 export default function DepartmentsPage() {
   const { isAdmin } = useAuth();
@@ -15,6 +16,7 @@ export default function DepartmentsPage() {
   const [editing, setEditing] = useState(null); // null = cerrado, {} = nuevo, {id,...} = editar
   const [toDelete, setToDelete] = useState(null);
   const [error, setError] = useState('');
+  const [view, setView] = useState('cards'); // 'cards' | 'orgchart'
 
   const load = useCallback(() => {
     setLoading(true);
@@ -46,21 +48,45 @@ export default function DepartmentsPage() {
           <h1 className="font-display text-3xl text-paper-100">Departamentos</h1>
           <p className="mt-1 text-sm text-paper-100/50">{departments.length} registrados</p>
         </div>
-        {isAdmin && (
-          <button
-            onClick={() => setEditing({ name: '', description: '' })}
-            className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2} />
-            Nuevo departamento
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-md border border-ink-600 p-0.5">
+            <button
+              onClick={() => setView('cards')}
+              className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs transition ${
+                view === 'cards' ? 'bg-gold-500 text-white' : 'text-paper-100/60 hover:text-paper-100'
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" strokeWidth={1.75} />
+              Tarjetas
+            </button>
+            <button
+              onClick={() => setView('orgchart')}
+              className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs transition ${
+                view === 'orgchart' ? 'bg-gold-500 text-white' : 'text-paper-100/60 hover:text-paper-100'
+              }`}
+            >
+              <Network className="h-3.5 w-3.5" strokeWidth={1.75} />
+              Organigrama
+            </button>
+          </div>
+          {isAdmin && (
+            <button
+              onClick={() => setEditing({ name: '', description: '' })}
+              className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2} />
+              Nuevo departamento
+            </button>
+          )}
+        </div>
       </header>
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
       {loading ? (
         <div className="flex justify-center pt-16"><Spinner size={24} /></div>
+      ) : view === 'orgchart' ? (
+        <OrgChart departments={departments} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {departments.map((d) => (

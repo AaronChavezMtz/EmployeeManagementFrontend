@@ -4,7 +4,6 @@ import { Users, Building2, Wallet, TrendingDown, FileSpreadsheet, FileText } fro
 import { departmentsApi } from '../api/departments';
 import { dashboardApi } from '../api/dashboard';
 import { reportsApi } from '../api/reports';
-import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
@@ -28,7 +27,6 @@ function StatCard({ icon: Icon, label, value, accent = 'gold' }) {
 }
 
 export default function DashboardPage() {
-  const { isAdmin } = useAuth();
   const { showToast } = useToast();
   const [summary, setSummary] = useState(null);
   const [kpis, setKpis] = useState(null);
@@ -70,26 +68,24 @@ export default function DashboardPage() {
           <h1 className="font-display text-3xl text-paper-100">Resumen general</h1>
           <p className="mt-1 text-sm text-paper-100/50">Datos agregados por departamento y tendencias de los últimos 12 meses</p>
         </div>
-        {isAdmin && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleExport('excel')}
-              disabled={exporting !== ''}
-              className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
-            >
-              {exporting === 'excel' ? <Spinner size={14} /> : <FileSpreadsheet className="h-4 w-4" strokeWidth={1.75} />}
-              Excel
-            </button>
-            <button
-              onClick={() => handleExport('pdf')}
-              disabled={exporting !== ''}
-              className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
-            >
-              {exporting === 'pdf' ? <Spinner size={14} /> : <FileText className="h-4 w-4" strokeWidth={1.75} />}
-              PDF
-            </button>
-          </div>
-        )}
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleExport('excel')}
+            disabled={exporting !== ''}
+            className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
+          >
+            {exporting === 'excel' ? <Spinner size={14} /> : <FileSpreadsheet className="h-4 w-4" strokeWidth={1.75} />}
+            Excel
+          </button>
+          <button
+            onClick={() => handleExport('pdf')}
+            disabled={exporting !== ''}
+            className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
+          >
+            {exporting === 'pdf' ? <Spinner size={14} /> : <FileText className="h-4 w-4" strokeWidth={1.75} />}
+            PDF
+          </button>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

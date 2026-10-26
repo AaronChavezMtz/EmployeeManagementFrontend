@@ -103,16 +103,16 @@ export default function EmployeesPage() {
           <h1 className="font-display text-3xl text-paper-100">Empleados</h1>
           <p className="mt-1 text-sm text-paper-100/50">{data.totalCount} registrados</p>
         </div>
-        {isAdmin && (
-          <div className="flex gap-2">
-            <button
-              onClick={handleExport}
-              disabled={exporting}
-              className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
-            >
-              {exporting ? <Spinner size={14} /> : <FileSpreadsheet className="h-4 w-4" strokeWidth={1.75} />}
-              Excel
-            </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
+          >
+            {exporting ? <Spinner size={14} /> : <FileSpreadsheet className="h-4 w-4" strokeWidth={1.75} />}
+            Excel
+          </button>
+          {isAdmin && (
             <Link
               to="/empleados/nuevo"
               className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
@@ -120,8 +120,8 @@ export default function EmployeesPage() {
               <Plus className="h-4 w-4" strokeWidth={2} />
               Nuevo empleado
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </header>
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
