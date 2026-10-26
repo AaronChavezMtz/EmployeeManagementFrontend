@@ -6,7 +6,14 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem('emp_user');
-    return stored ? JSON.parse(stored) : null;
+    const parsed = stored ? JSON.parse(stored) : null;
+    // Sesión vencida: se descarta en lugar de mostrar la app hasta el primer 401.
+    if (parsed && new Date(parsed.expiresAtUtc) <= new Date()) {
+      localStorage.removeItem('emp_token');
+      localStorage.removeItem('emp_user');
+      return null;
+    }
+    return parsed;
   });
 
   const login = useCallback(async (username, password) => {
