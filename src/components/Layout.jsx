@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X, UserRound } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X, UserRound, CalendarDays } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const APP_NAME = 'Gestor de Empleados';
@@ -9,11 +9,13 @@ const adminNavItems = [
   { to: '/', label: 'Resumen', icon: LayoutDashboard, end: true },
   { to: '/empleados', label: 'Empleados', icon: Users },
   { to: '/departamentos', label: 'Departamentos', icon: Building2 },
+  { to: '/solicitudes', label: 'Solicitudes', icon: CalendarDays },
   { to: '/usuarios', label: 'Usuarios', icon: ShieldCheck },
 ];
 
 const employeeNavItems = [
   { to: '/mi-perfil', label: 'Mi perfil', icon: UserRound },
+  { to: '/mis-ausencias', label: 'Mis ausencias', icon: CalendarDays },
 ];
 
 export default function Layout() {

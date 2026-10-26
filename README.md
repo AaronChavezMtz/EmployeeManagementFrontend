@@ -74,6 +74,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 
 - **Autenticación JWT** con dos roles: Administrador (RH) y Empleado (portal). Cada rol tiene su propio menú y rutas, y la API bloquea igualmente del lado del servidor lo que no le corresponde
 - **Portal del empleado**: el empleado ve solo su ficha y su historial, y puede actualizar su teléfono
+- **Vacaciones y ausencias**: el empleado consulta su saldo (LFT, por periodo de aniversario) y solicita vacaciones, incapacidad o permiso; RH aprueba o rechaza desde una bandeja con filtros
 - **Empleados**: listado con búsqueda, filtros (departamento, estado, salario), orden y paginación; alta/edición con validación; baja con fecha y motivo y recontratación; perfil individual con línea de tiempo de cambios
 - **Departamentos**: CRUD en modal, con conteo de empleados activos
 - **Usuarios**: panel de cuentas y roles; las cuentas de Empleado se vinculan a su ficha (solo Admin)
@@ -93,6 +94,8 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 | Gestionar usuarios, roles y vínculos | ✅ | ❌ |
 | Ver su propia ficha e historial | — | ✅ |
 | Actualizar su teléfono | — | ✅ |
+| Solicitar y cancelar ausencias | — | ✅ |
+| Aprobar o rechazar ausencias | ✅ | ❌ |
 
 La interfaz refleja estos permisos, pero **la autorización real vive en la API**: aunque alguien manipule el frontend, el servidor rechaza cualquier acción no permitida.
 
