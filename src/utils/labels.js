@@ -23,3 +23,16 @@ export function formatDate(value) {
 export function homePathFor(role) {
   return role === 'Employee' ? '/mi-perfil' : '/';
 }
+
+export const leaveTypes = {
+  Vacation: 'Vacaciones',
+  Sick: 'Incapacidad',
+  Personal: 'Permiso personal',
+};
+
+export const leaveStatuses = {
+  Pending: { label: 'Pendiente', classes: 'bg-gold-500/10 text-gold-600' },
+  Approved: { label: 'Aprobada', classes: 'bg-sage-500/15 text-sage-600' },
+  Rejected: { label: 'Rechazada', classes: 'bg-clay-500/10 text-clay-600' },
+  Cancelled: { label: 'Cancelada', classes: 'bg-ink-700 text-paper-100/50' },
+};

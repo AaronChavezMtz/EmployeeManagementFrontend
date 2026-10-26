@@ -11,6 +11,8 @@ import EmployeeDetailPage from './pages/EmployeeDetailPage';
 import DepartmentsPage from './pages/DepartmentsPage';
 import UsersPage from './pages/UsersPage';
 import MyProfilePage from './pages/MyProfilePage';
+import MyLeavePage from './pages/MyLeavePage';
+import LeaveRequestsPage from './pages/LeaveRequestsPage';
 
 export default function App() {
   return (
@@ -29,12 +31,14 @@ export default function App() {
                 <Route path="/empleados/:id/editar" element={<EmployeeFormPage />} />
                 <Route path="/departamentos" element={<DepartmentsPage />} />
                 <Route path="/usuarios" element={<UsersPage />} />
+                <Route path="/solicitudes" element={<LeaveRequestsPage />} />
               </Route>
             </Route>
 
             <Route element={<ProtectedRoute role="Employee" />}>
               <Route element={<Layout />}>
                 <Route path="/mi-perfil" element={<MyProfilePage />} />
+                <Route path="/mis-ausencias" element={<MyLeavePage />} />
               </Route>
             </Route>
 
