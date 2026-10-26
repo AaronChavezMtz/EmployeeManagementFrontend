@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Pencil, Trash2, ChevronLeft, ChevronRight, FileSpreadsheet } from 'lucide-react';
+import { Search, Plus, Pencil, UserMinus, UserPlus, ChevronLeft, ChevronRight, FileSpreadsheet } from 'lucide-react';
 import { employeesApi } from '../api/employees';
 import { departmentsApi } from '../api/departments';
 import { reportsApi } from '../api/reports';
@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
-import ConfirmDialog from '../components/ConfirmDialog';
+import { TerminateDialog, RehireDialog } from '../components/EmploymentDialogs';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
@@ -19,7 +19,8 @@ export default function EmployeesPage() {
   const [data, setData] = useState({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [toDelete, setToDelete] = useState(null);
+  const [toTerminate, setToTerminate] = useState(null);
+  const [toRehire, setToRehire] = useState(null);
   const [exporting, setExporting] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -83,17 +84,27 @@ export default function EmployeesPage() {
     }
   }
 
-  async function confirmDelete() {
-    const employeeName = toDelete.fullName;
+  // Los diálogos muestran el error dentro del formulario, por eso se relanza como Error con el mensaje.
+  async function confirmTerminate(payload) {
     try {
-      await employeesApi.remove(toDelete.id);
-      setToDelete(null);
-      showToast(`${employeeName} fue dado de baja.`, 'success');
-      loadEmployees();
+      await employeesApi.terminate(toTerminate.id, payload);
     } catch (err) {
-      showToast(getErrorMessage(err, 'No se pudo dar de baja al empleado.'), 'error');
-      setToDelete(null);
+      throw new Error(getErrorMessage(err, 'No se pudo dar de baja al empleado.'));
     }
+    showToast(`${toTerminate.fullName} fue dado de baja.`, 'success');
+    setToTerminate(null);
+    loadEmployees();
+  }
+
+  async function confirmRehire(payload) {
+    try {
+      await employeesApi.rehire(toRehire.id, payload);
+    } catch (err) {
+      throw new Error(getErrorMessage(err, 'No se pudo recontratar al empleado.'));
+    }
+    showToast(`${toRehire.fullName} fue recontratado.`, 'success');
+    setToRehire(null);
+    loadEmployees();
   }
 
   return (
@@ -211,9 +222,15 @@ export default function EmployeesPage() {
                         <Link to={`/empleados/${emp.id}/editar`} className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-gold-400">
                           <Pencil className="h-4 w-4" strokeWidth={1.75} />
                         </Link>
-                        <button onClick={() => setToDelete(emp)} className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-clay-500">
-                          <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-                        </button>
+                        {emp.isActive ? (
+                          <button onClick={() => setToTerminate(emp)} title="Dar de baja" className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-clay-500">
+                            <UserMinus className="h-4 w-4" strokeWidth={1.75} />
+                          </button>
+                        ) : (
+                          <button onClick={() => setToRehire(emp)} title="Recontratar" className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-sage-500">
+                            <UserPlus className="h-4 w-4" strokeWidth={1.75} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   )}
@@ -246,15 +263,8 @@ export default function EmployeesPage() {
         </div>
       )}
 
-      <ConfirmDialog
-        open={!!toDelete}
-        title="Dar de baja al empleado"
-        message={toDelete ? `¿Confirmas dar de baja a ${toDelete.fullName}? Esta acción lo marca como inactivo, no borra su historial.` : ''}
-        confirmLabel="Dar de baja"
-        danger
-        onConfirm={confirmDelete}
-        onCancel={() => setToDelete(null)}
-      />
+      <TerminateDialog employee={toTerminate} onConfirm={confirmTerminate} onCancel={() => setToTerminate(null)} />
+      <RehireDialog employee={toRehire} onConfirm={confirmRehire} onCancel={() => setToRehire(null)} />
     </div>
   );
 }

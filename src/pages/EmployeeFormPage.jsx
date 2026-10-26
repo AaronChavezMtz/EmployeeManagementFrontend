@@ -9,7 +9,7 @@ import Spinner from '../components/Spinner';
 
 const emptyForm = {
   firstName: '', lastName: '', email: '', phone: '', position: '',
-  salary: '', hireDate: '', birthDate: '', departmentId: '', isActive: true,
+  salary: '', hireDate: '', birthDate: '', departmentId: '',
 };
 
 export default function EmployeeFormPage() {
@@ -42,7 +42,6 @@ export default function EmployeeFormPage() {
         hireDate: emp.hireDate?.slice(0, 10) || '',
         birthDate: emp.birthDate?.slice(0, 10) || '',
         departmentId: emp.departmentId,
-        isActive: emp.isActive,
       });
       setLoading(false);
     }).catch((err) => {
@@ -134,14 +133,6 @@ export default function EmployeeFormPage() {
           {!isEditing && (
             <Field label="Fecha de contratación" error={errors.hireDate}>
               <input type="date" className="input" value={form.hireDate} onChange={(e) => handleChange('hireDate', e.target.value)} required />
-            </Field>
-          )}
-          {isEditing && (
-            <Field label="Estado">
-              <select className="input" value={form.isActive} onChange={(e) => handleChange('isActive', e.target.value === 'true')}>
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
-              </select>
             </Field>
           )}
         </div>

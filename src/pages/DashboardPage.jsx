@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { Users, Building2, Wallet, TrendingDown, FileSpreadsheet, FileText } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { Users, Wallet, TrendingDown, Hourglass, FileSpreadsheet, FileText } from 'lucide-react';
+import { terminationReasons } from '../utils/labels';
 import { departmentsApi } from '../api/departments';
 import { dashboardApi } from '../api/dashboard';
 import { reportsApi } from '../api/reports';
@@ -13,7 +14,7 @@ const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: '
 const chartAxisStyle = { fill: '#6B7280', fontSize: 12 };
 const chartTooltipStyle = { background: '#FFFFFF', border: '1px solid #E3E6EC', borderRadius: 8, fontSize: 13, boxShadow: '0 4px 12px rgba(28,36,51,0.08)' };
 
-function StatCard({ icon: Icon, label, value, accent = 'gold' }) {
+function StatCard({ icon: Icon, label, value, hint, accent = 'gold' }) {
   const accentClasses = { gold: 'text-gold-500', sage: 'text-sage-500', clay: 'text-clay-500' };
   return (
     <div className="rounded-lg border border-ink-700 bg-ink-900 p-5">
@@ -22,6 +23,7 @@ function StatCard({ icon: Icon, label, value, accent = 'gold' }) {
         <Icon className={`h-4 w-4 ${accentClasses[accent]}`} strokeWidth={1.75} />
       </div>
       <p className="mt-3 font-display text-2xl text-paper-100">{value}</p>
+      {hint && <p className="mt-1 text-xs text-paper-100/40">{hint}</p>}
     </div>
   );
 }
@@ -59,7 +61,7 @@ export default function DashboardPage() {
 
   const totalPayroll = summary.reduce((sum, d) => sum + d.totalPayroll, 0);
   const payrollChartData = summary.map((d) => ({ name: d.departmentName, nómina: Math.round(d.totalPayroll) }));
-  const hiringChartData = kpis.hiringTrend.map((h) => ({ mes: h.monthLabel, contrataciones: h.hires }));
+  const hiringChartData = kpis.hiringTrend.map((h) => ({ mes: h.monthLabel, altas: h.hires, bajas: h.terminations }));
 
   return (
     <div>
@@ -89,15 +91,21 @@ export default function DashboardPage() {
       </header>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Building2} label="Departamentos" value={summary.length} />
-        <StatCard icon={Users} label="Plantilla activa" value={kpis.activeHeadcount} accent="sage" />
-        <StatCard icon={TrendingDown} label="Rotación histórica" value={`${kpis.turnoverRatePercent}%`} accent="clay" />
+        <StatCard icon={Users} label="Plantilla activa" value={kpis.activeHeadcount} hint={`${summary.length} departamentos`} accent="sage" />
+        <StatCard
+          icon={TrendingDown}
+          label="Rotación 12 meses"
+          value={`${kpis.turnoverRatePercent}%`}
+          hint={`${kpis.terminationsLast12Months} bajas sobre la plantilla promedio`}
+          accent="clay"
+        />
+        <StatCard icon={Hourglass} label="Antigüedad promedio" value={`${kpis.averageTenureYears} años`} hint="Empleados activos" />
         <StatCard icon={Wallet} label="Nómina mensual total" value={currency.format(totalPayroll)} />
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
-          <h2 className="font-display text-lg text-paper-100">Contrataciones por mes</h2>
+          <h2 className="font-display text-lg text-paper-100">Altas y bajas por mes</h2>
           <p className="mt-0.5 text-xs text-paper-100/40">Últimos 12 meses</p>
           <div className="mt-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -106,10 +114,22 @@ export default function DashboardPage() {
                 <XAxis dataKey="mes" tick={chartAxisStyle} axisLine={{ stroke: '#E3E6EC' }} tickLine={false} />
                 <YAxis allowDecimals={false} tick={chartAxisStyle} axisLine={false} tickLine={false} width={30} />
                 <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} />
-                <Line type="monotone" dataKey="contrataciones" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Line type="monotone" dataKey="altas" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
+                <Line type="monotone" dataKey="bajas" stroke="#D64545" strokeWidth={2.5} dot={{ r: 3, fill: '#D64545' }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
+          {kpis.terminationsByReason.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2 text-xs">
+              <span className="text-paper-100/40">Bajas por motivo:</span>
+              {kpis.terminationsByReason.map((r) => (
+                <span key={r.reason} className="rounded-full bg-clay-500/10 px-2.5 py-0.5 text-clay-600">
+                  {terminationReasons[r.reason] ?? r.reason}: {r.count}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
