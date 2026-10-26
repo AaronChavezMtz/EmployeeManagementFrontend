@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X, UserRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const APP_NAME = 'Gestor de Empleados';
 
-const baseNavItems = [
+const adminNavItems = [
   { to: '/', label: 'Resumen', icon: LayoutDashboard, end: true },
   { to: '/empleados', label: 'Empleados', icon: Users },
   { to: '/departamentos', label: 'Departamentos', icon: Building2 },
+  { to: '/usuarios', label: 'Usuarios', icon: ShieldCheck },
+];
+
+const employeeNavItems = [
+  { to: '/mi-perfil', label: 'Mi perfil', icon: UserRound },
 ];
 
 export default function Layout() {
@@ -16,9 +21,7 @@ export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = isAdmin
-    ? [...baseNavItems, { to: '/usuarios', label: 'Usuarios', icon: ShieldCheck }]
-    : baseNavItems;
+  const navItems = isAdmin ? adminNavItems : employeeNavItems;
 
   // Cierra el menú al navegar a otra pantalla (evita que quede abierto sobre la nueva página).
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
@@ -105,7 +108,7 @@ export default function Layout() {
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm text-paper-100">{user?.username}</p>
-              <p className="text-[11px] text-paper-100/40">{isAdmin ? 'Administrador' : 'Solo lectura'}</p>
+              <p className="text-[11px] text-paper-100/40">{isAdmin ? 'Administrador' : 'Empleado'}</p>
             </div>
           </div>
           <button

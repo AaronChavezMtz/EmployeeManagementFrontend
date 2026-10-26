@@ -15,7 +15,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 > | Rol | Usuario | Contraseña | Permisos |
 > |---|---|---|---|
 > | Administrador | `adminprueba` | `123_Prueba` | Acceso completo: crear, editar y eliminar |
-> | Solo lectura | `usuariolector` | `lector_123` | Solo puede consultar información |
+> | Empleado | `usuariolector` | `lector_123` | Portal del empleado: solo su ficha, su historial y sus ausencias |
 >
 > *Nota: la API corre en un plan gratuito y puede tardar ~30-60 s en responder la primera vez. Los datos de la demo son ficticios; no registres información real.*
 
@@ -72,25 +72,27 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 
 ## Funcionalidades
 
-- **Autenticación JWT** con dos roles (Administrador / Solo lectura) — la interfaz oculta acciones de escritura según el rol, y la API las bloquea igualmente del lado del servidor
-- **Empleados**: listado con búsqueda, filtros (departamento, estado, salario), orden y paginación; alta/edición con validación; perfil individual con línea de tiempo de cambios
+- **Autenticación JWT** con dos roles: Administrador (RH) y Empleado (portal). Cada rol tiene su propio menú y rutas, y la API bloquea igualmente del lado del servidor lo que no le corresponde
+- **Portal del empleado**: el empleado ve solo su ficha y su historial, y puede actualizar su teléfono
+- **Empleados**: listado con búsqueda, filtros (departamento, estado, salario), orden y paginación; alta/edición con validación; baja con fecha y motivo y recontratación; perfil individual con línea de tiempo de cambios
 - **Departamentos**: CRUD en modal, con conteo de empleados activos
-- **Usuarios**: panel de administración de cuentas y roles (solo Admin)
-- **Dashboard**: plantilla activa, rotación de personal, tendencia de contrataciones (gráfica), nómina por departamento
+- **Usuarios**: panel de cuentas y roles; las cuentas de Empleado se vinculan a su ficha (solo Admin)
+- **Dashboard**: plantilla activa, rotación de 12 meses, antigüedad promedio, altas y bajas por mes, bajas por motivo y nómina por departamento
 - **Exportación** de reportes a Excel y PDF
 - **Manejo de errores centralizado**: distingue errores de red (API no disponible) de errores de negocio, con notificaciones (toast) para confirmar cada acción
 - **Responsivo**: menú lateral colapsable en móvil/tablet, tablas con scroll horizontal
 
 ## Permisos por rol
 
-| Acción | Administrador | Solo lectura |
+| Acción | Administrador | Empleado |
 |---|:---:|:---:|
-| Ver dashboard, empleados y departamentos | ✅ | ✅ |
-| Buscar, filtrar y ver historial | ✅ | ✅ |
-| Exportar reportes | ✅ | ✅ |
-| Crear / editar / dar de baja empleados | ✅ | ❌ |
+| Ver dashboard, empleados y departamentos | ✅ | ❌ |
+| Exportar reportes | ✅ | ❌ |
+| Crear / editar / dar de baja / recontratar empleados | ✅ | ❌ |
 | Gestionar departamentos | ✅ | ❌ |
-| Gestionar usuarios y roles | ✅ | ❌ |
+| Gestionar usuarios, roles y vínculos | ✅ | ❌ |
+| Ver su propia ficha e historial | — | ✅ |
+| Actualizar su teléfono | — | ✅ |
 
 La interfaz refleja estos permisos, pero **la autorización real vive en la API**: aunque alguien manipule el frontend, el servidor rechaza cualquier acción no permitida.
 

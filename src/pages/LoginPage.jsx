@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookUser, AlertCircle, KeyRound, ShieldAlert, Eye } from 'lucide-react';
+import { BookUser, AlertCircle, KeyRound, ShieldAlert, UserRound } from 'lucide-react';
+import { homePathFor } from '../utils/labels';
 import { useAuth } from '../context/AuthContext';
 import Spinner from '../components/Spinner';
 import { getErrorMessage } from '../utils/errors';
 
 const demoAccounts = [
   { role: 'Administrador', username: 'adminprueba', password: '123_Prueba', icon: ShieldAlert, note: 'Acceso completo: crear, editar, eliminar' },
-  { role: 'Solo lectura', username: 'usuariolector', password: 'lector_123', icon: Eye, note: 'Solo puede consultar información' },
+  { role: 'Empleado', username: 'usuariolector', password: 'lector_123', icon: UserRound, note: 'Portal del empleado: su ficha y sus ausencias' },
 ];
 
 export default function LoginPage() {
@@ -19,15 +20,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const from = location.state?.from?.pathname || '/';
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await login(username, password);
-      navigate(from, { replace: true });
+      const sessionUser = await login(username, password);
+      navigate(location.state?.from?.pathname || homePathFor(sessionUser.role), { replace: true });
     } catch (err) {
       setError(getErrorMessage(err, 'Usuario o contraseña incorrectos'));
     } finally {

@@ -18,3 +18,8 @@ export function formatDate(value) {
   const [y, m, d] = value.slice(0, 10).split('-').map(Number);
   return new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium' }).format(new Date(y, m - 1, d));
 }
+
+// Página de inicio según el rol: RH entra al resumen, el empleado a su portal.
+export function homePathFor(role) {
+  return role === 'Employee' ? '/mi-perfil' : '/';
+}

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import {
-  ArrowLeft, Pencil, Mail, Phone, Briefcase, Calendar, Building2,
-  UserPlus, PencilLine, ArrowRightLeft, DollarSign, UserCheck, UserX,
-} from 'lucide-react';
+import { ArrowLeft, Pencil, Mail, Phone, Briefcase, Calendar, Building2, DollarSign, UserX } from 'lucide-react';
+import HistoryTimeline from '../components/HistoryTimeline';
 import { terminationReasons, formatDate } from '../utils/labels';
 import { employeesApi } from '../api/employees';
 import { useAuth } from '../context/AuthContext';
@@ -11,16 +9,7 @@ import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
-const dateTimeFmt = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
 
-const historyMeta = {
-  Created: { icon: UserPlus, label: 'Contratación', color: 'text-sage-500 bg-sage-500/10' },
-  Updated: { icon: PencilLine, label: 'Datos actualizados', color: 'text-paper-100/60 bg-ink-700' },
-  DepartmentChanged: { icon: ArrowRightLeft, label: 'Cambio de departamento', color: 'text-gold-600 bg-gold-500/10' },
-  SalaryChanged: { icon: DollarSign, label: 'Cambio de salario', color: 'text-gold-600 bg-gold-500/10' },
-  Activated: { icon: UserCheck, label: 'Reactivado', color: 'text-sage-500 bg-sage-500/10' },
-  Deactivated: { icon: UserX, label: 'Dado de baja', color: 'text-clay-500 bg-clay-500/10' },
-};
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -94,42 +83,7 @@ export default function EmployeeDetailPage() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
-        <h2 className="font-display text-lg text-paper-100">Historial</h2>
-        <p className="mt-0.5 text-xs text-paper-100/40">Cambios registrados sobre este empleado</p>
-
-        <div className="mt-5 space-y-4">
-          {!history || history.length === 0 ? (
-            <p className="text-sm text-paper-100/40">Sin movimientos registrados.</p>
-          ) : (
-            history.map((h) => {
-              const meta = historyMeta[h.changeType] ?? historyMeta.Updated;
-              const Icon = meta.icon;
-              return (
-                <div key={h.id} className="flex gap-3">
-                  <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${meta.color}`}>
-                    <Icon className="h-4 w-4" strokeWidth={1.75} />
-                  </div>
-                  <div className="flex-1 border-b border-ink-700/60 pb-4 last:border-0 last:pb-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-paper-100">{meta.label}</p>
-                      <p className="text-xs text-paper-100/40">{dateTimeFmt.format(new Date(h.changedAtUtc))}</p>
-                    </div>
-                    {(h.oldValue || h.newValue) && (
-                      <p className="mt-0.5 text-xs text-paper-100/60">
-                        {h.oldValue && <span className="line-through opacity-60">{h.oldValue}</span>}
-                        {h.oldValue && h.newValue && ' → '}
-                        {h.newValue}
-                      </p>
-                    )}
-                    <p className="mt-1 text-xs text-paper-100/40">por {h.changedBy}</p>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
+      <HistoryTimeline history={history} subtitle="Cambios registrados sobre este empleado" />
     </div>
   );
 }
