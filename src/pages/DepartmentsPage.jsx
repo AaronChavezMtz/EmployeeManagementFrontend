@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import { Loading, Skeleton } from '../components/Skeleton';
 import ConfirmDialog from '../components/ConfirmDialog';
 import OrgChart from '../components/OrgChart';
 
@@ -83,8 +84,17 @@ export default function DepartmentsPage() {
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
-      {loading ? (
-        <div className="flex justify-center pt-16"><Spinner size={24} /></div>
+      {loading && departments.length === 0 ? (
+        <Loading className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} className="rounded-lg border border-ink-700 bg-ink-900 p-5" aria-hidden="true">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="mt-2 h-3 w-48" />
+              <div className="ledger-divider my-4" />
+              <Skeleton className="h-3 w-28" />
+            </div>
+          ))}
+        </Loading>
       ) : view === 'orgchart' ? (
         <OrgChart departments={departments} />
       ) : (

@@ -8,7 +8,7 @@ import { terminationReasons, formatDate } from '../utils/labels';
 import { employeesApi } from '../api/employees';
 import { useAuth } from '../context/AuthContext';
 import { getErrorMessage } from '../utils/errors';
-import Spinner from '../components/Spinner';
+import { Loading, SkeletonProfile, SkeletonTimeline } from '../components/Skeleton';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
@@ -55,7 +55,7 @@ export default function EmployeeDetailPage() {
   }
 
   if (error) return <p className="text-sm text-clay-500">{error}</p>;
-  if (!employee) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
+  const loaded = !!employee;
 
   return (
     <div className="max-w-3xl">
@@ -64,6 +64,13 @@ export default function EmployeeDetailPage() {
         Volver a empleados
       </Link>
 
+{!loaded ? (
+        <Loading>
+          <SkeletonProfile fields={8} />
+          <SkeletonTimeline />
+        </Loading>
+      ) : (
+      <>
       <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
         <div className="flex items-start justify-between">
           <div>
@@ -114,6 +121,8 @@ export default function EmployeeDetailPage() {
       <HistoryTimeline history={history} subtitle="Cambios registrados sobre este empleado" />
 
       <CredentialsDialog access={createdAccess} employeeName={employee.fullName} onClose={() => setCreatedAccess(null)} />
+      </>
+      )}
     </div>
   );
 }

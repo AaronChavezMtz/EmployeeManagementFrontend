@@ -6,6 +6,7 @@ import { departmentsApi } from '../api/departments';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage, normalizeValidationErrors } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import { Loading, Skeleton } from '../components/Skeleton';
 import CredentialsDialog from '../components/CredentialsDialog';
 
 const emptyForm = {
@@ -99,7 +100,7 @@ export default function EmployeeFormPage() {
     }
   }
 
-  if (loading) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
+  const loaded = !loading;
 
   return (
     <div className="max-w-2xl">
@@ -110,6 +111,19 @@ export default function EmployeeFormPage() {
 
       <h1 className="font-display text-3xl text-paper-100">{isEditing ? 'Editar empleado' : 'Nuevo empleado'}</h1>
 
+{!loaded ? (
+        <Loading className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {Array.from({ length: 8 }, (_, i) => (
+              <div key={i}>
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="mt-2 h-10 w-full" />
+              </div>
+            ))}
+          </div>
+        </Loading>
+      ) : (
+      <>
       <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Field label="Nombre" error={errors.firstName}>
@@ -180,6 +194,8 @@ export default function EmployeeFormPage() {
         employeeName={createdAccess?.name}
         onClose={() => navigate('/empleados')}
       />
+      </>
+      )}
     </div>
   );
 }

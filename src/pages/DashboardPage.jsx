@@ -8,6 +8,7 @@ import { reportsApi } from '../api/reports';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import { Loading, Skeleton, SkeletonStat } from '../components/Skeleton';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 // Montos cortos para ejes y etiquetas de barras ($70.5 mil). Intl con notation: 'compact' da "70.5 k$" en es-MX.
@@ -64,11 +65,11 @@ export default function DashboardPage() {
   }
 
   if (error) return <p className="text-sm text-clay-500">{error}</p>;
-  if (!summary || !kpis) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
+  const loaded = summary && kpis;
 
-  const totalPayroll = summary.reduce((sum, d) => sum + d.totalPayroll, 0);
-  const payrollChartData = summary.map((d) => ({ name: d.departmentName, nómina: Math.round(d.totalPayroll) }));
-  const hiringChartData = kpis.hiringTrend.map((h) => ({ mes: h.monthLabel, altas: h.hires, bajas: h.terminations }));
+  const totalPayroll = loaded ? summary.reduce((sum, d) => sum + d.totalPayroll, 0) : 0;
+  const payrollChartData = (summary ?? []).map((d) => ({ name: d.departmentName, nómina: Math.round(d.totalPayroll) }));
+  const hiringChartData = (kpis?.hiringTrend ?? []).map((h) => ({ mes: h.monthLabel, altas: h.hires, bajas: h.terminations }));
 
   return (
     <div>
@@ -97,6 +98,23 @@ export default function DashboardPage() {
         </div>
       </header>
 
+{!loaded ? (
+        <Loading>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => <SkeletonStat key={i} />)}
+          </div>
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {[0, 1].map((i) => (
+              <div key={i} className="rounded-lg border border-ink-700 bg-ink-900 p-6">
+                <Skeleton className="h-5 w-44" />
+                <Skeleton className="mt-2 h-3 w-24" />
+                <Skeleton className="mt-5 h-64 w-full" />
+              </div>
+            ))}
+          </div>
+        </Loading>
+      ) : (
+      <>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard icon={Users} label="Plantilla activa" value={kpis.activeHeadcount} hint={`${summary.length} departamentos`} accent="sage" />
         <StatCard
@@ -184,6 +202,8 @@ export default function DashboardPage() {
           </tbody>
         </table>
       </div>
+      </>
+      )}
     </div>
   );
 }

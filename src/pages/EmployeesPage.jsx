@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import { Skeleton, SkeletonCards, SkeletonRows } from '../components/Skeleton';
 import { TerminateDialog, RehireDialog } from '../components/EmploymentDialogs';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
@@ -22,6 +23,7 @@ export default function EmployeesPage() {
   const [toTerminate, setToTerminate] = useState(null);
   const [toRehire, setToRehire] = useState(null);
   const [exporting, setExporting] = useState(false);
+  const [loadedOnce, setLoadedOnce] = useState(false);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -52,6 +54,7 @@ export default function EmployeesPage() {
       .getAll(params)
       .then((result) => {
         setData(result);
+        setLoadedOnce(true);
         setError('');
       })
       .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar los empleados.')))
@@ -62,6 +65,10 @@ export default function EmployeesPage() {
     const timeout = setTimeout(loadEmployees, 300); // debounce de búsqueda
     return () => clearTimeout(timeout);
   }, [loadEmployees]);
+
+  // Primera carga: esqueleto. Después (filtros, páginas): se atenúan los datos anteriores, sin vaciar la tabla.
+  const firstLoad = loading && !loadedOnce;
+  const refreshing = loading && loadedOnce;
 
   function updateFilter(key, value) {
     setFilters((f) => ({ ...f, [key]: value, pageNumber: key === 'pageNumber' ? value : 1 }));
@@ -112,7 +119,9 @@ export default function EmployeesPage() {
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-paper-100">Empleados</h1>
-          <p className="mt-1 text-sm text-paper-100/50">{data.totalCount} registrados</p>
+          {firstLoad
+            ? <Skeleton className="mt-2 h-4 w-24" />
+            : <p className="mt-1 text-sm text-paper-100/50">{data.totalCount} registrados</p>}
         </div>
         <div className="flex gap-2">
           <button
@@ -183,9 +192,9 @@ export default function EmployeesPage() {
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
       {/* Móvil: una tarjeta por empleado, con todas las acciones a la vista. */}
-      <ul className="space-y-3 sm:hidden">
-        {loading ? (
-          <li className="flex justify-center py-12"><Spinner size={24} /></li>
+      <ul className={`space-y-3 transition-opacity sm:hidden ${refreshing ? 'opacity-50' : ''}`} aria-busy={loading}>
+        {firstLoad ? (
+          <SkeletonCards count={5} withActions={isAdmin} />
         ) : data.items.length === 0 ? (
           <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">Sin resultados para este filtro.</li>
         ) : (
@@ -234,9 +243,9 @@ export default function EmployeesPage() {
               {isAdmin && <th className="px-5 py-3 font-normal text-right">Acciones</th>}
             </tr>
           </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} className="py-16 text-center"><Spinner size={24} /></td></tr>
+          <tbody className={`transition-opacity ${refreshing ? 'opacity-50' : ''}`} aria-busy={loading}>
+            {firstLoad ? (
+              <SkeletonRows rows={8} cols={isAdmin ? 6 : 5} />
             ) : data.items.length === 0 ? (
               <tr><td colSpan={6} className="py-12 text-center text-paper-100/40">Sin resultados para este filtro.</td></tr>
             ) : (

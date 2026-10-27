@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import { formatDate, leaveStatuses, leaveTypes, todayInputValue } from '../utils/labels';
 import Spinner from '../components/Spinner';
+import { Loading, Skeleton, SkeletonStat } from '../components/Skeleton';
 
 const emptyForm = { type: 'Vacation', startDate: '', endDate: '', reason: '' };
 
@@ -63,7 +64,7 @@ export default function MyLeavePage() {
   }
 
   if (error) return <p className="text-sm text-clay-500">{error}</p>;
-  if (!balance || !requests) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
+  const loaded = balance && requests;
 
   const today = todayInputValue();
   const canCancel = (r) => r.status === 'Pending' || (r.status === 'Approved' && r.startDate.slice(0, 10) > today);
@@ -77,10 +78,25 @@ export default function MyLeavePage() {
       <header className="mb-6">
         <h1 className="font-display text-3xl text-paper-100">Mis ausencias</h1>
         <p className="mt-1 text-sm text-paper-100/50">
-          Periodo de vacaciones del {formatDate(balance.periodStart)} al {formatDate(balance.periodEnd)}
+          {balance ? `Periodo de vacaciones del ${formatDate(balance.periodStart)} al ${formatDate(balance.periodEnd)}` : 'Tu saldo de vacaciones y tus solicitudes'}
         </p>
       </header>
 
+{!loaded ? (
+        <Loading>
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => <SkeletonStat key={i} />)}
+          </div>
+          <div className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
+            <Skeleton className="h-5 w-40" />
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[0, 1, 2].map((i) => <Skeleton key={i} className="h-10 w-full" />)}
+            </div>
+            <Skeleton className="mt-4 h-10 w-full" />
+          </div>
+        </Loading>
+      ) : (
+      <>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <BalanceCard label="Disponibles" value={balance.availableDays} hint="días hábiles" />
         <BalanceCard label="Corresponden" value={balance.entitledDays} hint={`${balance.yearsOfService} años de servicio (LFT)`} />
@@ -203,6 +219,8 @@ export default function MyLeavePage() {
           </tbody>
         </table>
       </div>
+      </>
+      )}
     </div>
   );
 }

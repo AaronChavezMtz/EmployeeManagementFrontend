@@ -6,6 +6,7 @@ import { getErrorMessage } from '../utils/errors';
 import { formatDate } from '../utils/labels';
 import HistoryTimeline from '../components/HistoryTimeline';
 import Spinner from '../components/Spinner';
+import { Loading, SkeletonProfile, SkeletonTimeline } from '../components/Skeleton';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
@@ -54,7 +55,7 @@ export default function MyProfilePage() {
   }
 
   if (error) return <p className="text-sm text-clay-500">{error}</p>;
-  if (!employee) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
+  const loaded = !!employee;
 
   return (
     <div className="max-w-3xl">
@@ -63,6 +64,13 @@ export default function MyProfilePage() {
         <p className="mt-1 text-sm text-paper-100/50">Tu información registrada en RH</p>
       </header>
 
+{!loaded ? (
+        <Loading>
+          <SkeletonProfile />
+          <SkeletonTimeline />
+        </Loading>
+      ) : (
+      <>
       <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
         <h2 className="font-display text-2xl text-paper-100">{employee.fullName}</h2>
         <p className="mt-1 text-sm text-paper-100/50">{employee.position} · {employee.departmentName}</p>
@@ -104,6 +112,8 @@ export default function MyProfilePage() {
       </div>
 
       <HistoryTimeline history={history} subtitle="Cambios registrados en tu expediente" />
+      </>
+      )}
     </div>
   );
 }

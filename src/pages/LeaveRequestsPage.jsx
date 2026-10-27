@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import { formatDate, leaveStatuses, leaveTypes } from '../utils/labels';
 import Spinner from '../components/Spinner';
+import { SkeletonCards, SkeletonRows } from '../components/Skeleton';
 
 const filters = [
   { value: 'Pending', label: 'Pendientes' },
@@ -18,14 +19,16 @@ export default function LeaveRequestsPage() {
   const { showToast } = useToast();
   const [status, setStatus] = useState('Pending');
   const [requests, setRequests] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reviewing, setReviewing] = useState(null); // { request, action: 'approve' | 'reject' }
 
   const load = useCallback(() => {
-    setRequests(null);
+    setLoading(true);
     leaveApi.getAll(status)
       .then(setRequests)
-      .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar las solicitudes.')));
+      .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar las solicitudes.')))
+      .finally(() => setLoading(false));
   }, [status]);
 
   useEffect(() => { load(); }, [load]);
@@ -62,9 +65,9 @@ export default function LeaveRequestsPage() {
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
-      <ul className="space-y-3 sm:hidden">
+      <ul className={`space-y-3 transition-opacity sm:hidden ${loading && requests ? 'opacity-50' : ''}`} aria-busy={loading}>
         {!requests ? (
-          <li className="flex justify-center py-12"><Spinner size={24} /></li>
+          <SkeletonCards count={3} withActions />
         ) : requests.length === 0 ? (
           <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">No hay solicitudes en esta vista.</li>
         ) : (
@@ -110,9 +113,9 @@ export default function LeaveRequestsPage() {
               <th className="px-5 py-3 font-normal text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className={`transition-opacity ${loading && requests ? 'opacity-50' : ''}`} aria-busy={loading}>
             {!requests ? (
-              <tr><td colSpan={6} className="py-16 text-center"><Spinner size={24} /></td></tr>
+              <SkeletonRows rows={4} cols={6} />
             ) : requests.length === 0 ? (
               <tr><td colSpan={6} className="py-12 text-center text-paper-100/40">No hay solicitudes en esta vista.</td></tr>
             ) : (
