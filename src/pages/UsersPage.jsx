@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import { SkeletonRows } from '../components/Skeleton';
 
 const roleLabels = { Admin: 'Administrador', Employee: 'Empleado' };
 
@@ -106,9 +107,9 @@ export default function UsersPage() {
               <th className="px-5 py-3 font-normal" />
             </tr>
           </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} className="py-16 text-center"><Spinner size={24} /></td></tr>
+          <tbody className={`transition-opacity ${loading && users.length > 0 ? 'opacity-50' : ''}`} aria-busy={loading}>
+            {loading && users.length === 0 ? (
+              <SkeletonRows rows={5} cols={6} />
             ) : (
               users.map((u) => {
                 const isSelf = u.username === currentUser?.username;
