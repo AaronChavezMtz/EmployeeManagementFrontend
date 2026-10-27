@@ -49,13 +49,13 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 ### Dashboard
 
 <p align="center">
-  <img src="docs/images/resumen.png" width="600" alt="Dashboard con KPIs">
+  <img src="docs/images/resumen.png" width="600" alt="Resumen con plantilla, rotación de 12 meses, antigüedad y gráficas de altas, bajas y nómina">
 </p>
 
 ### Gestión de empleados
 
 <p align="center">
-  <img src="docs/images/empleados.png" width="600" alt="Listado de empleados con filtros">
+  <img src="docs/images/empleados.png" width="600" alt="Listado de empleados con búsqueda, filtros, estado y acciones de editar, dar de baja y recontratar">
 </p>
 
 ### Gestión de departamentos
@@ -64,10 +64,24 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
   <img src="docs/images/departamentos.png" width="600" alt="Gestión de departamentos">
 </p>
 
+### Solicitudes de ausencia (RH)
+
+<p align="center">
+  <img src="docs/images/solicitudes.png" width="600" alt="Bandeja de solicitudes de vacaciones y permisos con acciones de aprobar y rechazar">
+</p>
+
 ### Gestión de usuarios
 
 <p align="center">
-  <img src="docs/images/usuarios.png" width="600" alt="Administración de usuarios y roles">
+  <img src="docs/images/usuarios.png" width="600" alt="Usuarios con rol, empleado vinculado y cuentas protegidas de la demo">
+</p>
+
+### Portal del empleado
+
+<p align="center">
+  <img src="docs/images/portal-ausencias.png" width="600" alt="Mis ausencias: saldo de vacaciones según la LFT, formulario de solicitud y lista de solicitudes">
+  &nbsp;
+  <img src="docs/images/portal-movil.png" width="200" alt="Mis ausencias en un teléfono">
 </p>
 
 ## Funcionalidades
