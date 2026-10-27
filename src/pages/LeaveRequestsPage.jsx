@@ -62,7 +62,43 @@ export default function LeaveRequestsPage() {
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
+      <ul className="space-y-3 sm:hidden">
+        {!requests ? (
+          <li className="flex justify-center py-12"><Spinner size={24} /></li>
+        ) : requests.length === 0 ? (
+          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">No hay solicitudes en esta vista.</li>
+        ) : (
+          requests.map((r) => {
+            const st = leaveStatuses[r.status] ?? leaveStatuses.Pending;
+            return (
+              <li key={r.id} className="rounded-lg border border-ink-700 bg-ink-900 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link to={`/empleados/${r.employeeId}`} className="font-medium text-paper-100">{r.employeeName}</Link>
+                    <p className="text-sm text-paper-100/70">{leaveTypes[r.type] ?? r.type}</p>
+                  </div>
+                  <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${st.classes}`}>{st.label}</span>
+                </div>
+                <p className="mt-1 text-sm text-paper-100/70">{formatDate(r.startDate)} – {formatDate(r.endDate)} · {r.days} {r.days === 1 ? 'día' : 'días'}</p>
+                {r.reason && <p className="mt-1 text-sm text-paper-100/60">{r.reason}</p>}
+                {r.reviewedBy && <p className="mt-1 text-xs text-paper-100/60">por {r.reviewedBy}{r.reviewComment ? `: “${r.reviewComment}”` : ''}</p>}
+                {r.status === 'Pending' && (
+                  <div className="mt-3 flex gap-2 border-t border-ink-700 pt-3">
+                    <button onClick={() => setReviewing({ request: r, action: 'approve' })} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-sage-600">
+                      <Check className="h-4 w-4" strokeWidth={2} /> Aprobar
+                    </button>
+                    <button onClick={() => setReviewing({ request: r, action: 'reject' })} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-clay-600">
+                      <X className="h-4 w-4" strokeWidth={2} /> Rechazar
+                    </button>
+                  </div>
+                )}
+              </li>
+            );
+          })
+        )}
+      </ul>
+
+      <div className="hidden overflow-x-auto rounded-lg border border-ink-700 bg-ink-900 sm:block">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
             <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">

@@ -24,12 +24,12 @@ const chartTooltipStyle = { background: '#FFFFFF', border: '1px solid #E3E6EC', 
 function StatCard({ icon: Icon, label, value, hint, accent = 'gold' }) {
   const accentClasses = { gold: 'text-gold-500', sage: 'text-sage-500', clay: 'text-clay-500' };
   return (
-    <div className="rounded-lg border border-ink-700 bg-ink-900 p-5">
-      <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-wide text-paper-100/40">{label}</p>
+    <div className="rounded-lg border border-ink-700 bg-ink-900 p-4 sm:p-5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs uppercase tracking-wide text-paper-100/60">{label}</p>
         <Icon className={`h-4 w-4 ${accentClasses[accent]}`} strokeWidth={1.75} />
       </div>
-      <p className="mt-3 font-display text-2xl text-paper-100">{value}</p>
+      <p className="mt-2 font-display text-xl text-paper-100 sm:mt-3 sm:text-2xl">{value}</p>
       {hint && <p className="mt-1 text-xs text-paper-100/40">{hint}</p>}
     </div>
   );
@@ -97,7 +97,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard icon={Users} label="Plantilla activa" value={kpis.activeHeadcount} hint={`${summary.length} departamentos`} accent="sage" />
         <StatCard
           icon={TrendingDown}
