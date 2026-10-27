@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, LabelList } from 'recharts';
 import { Users, Wallet, TrendingDown, Hourglass, FileSpreadsheet, FileText } from 'lucide-react';
 import { terminationReasons } from '../utils/labels';
 import { departmentsApi } from '../api/departments';
@@ -10,6 +10,13 @@ import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
+// Montos cortos para ejes y etiquetas de barras ($70.5 mil). Intl con notation: 'compact' da "70.5 k$" en es-MX.
+const shortNumber = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 1 });
+function compactMoney(value) {
+  if (Math.abs(value) >= 1_000_000) return `$${shortNumber.format(value / 1_000_000)} M`;
+  if (Math.abs(value) >= 1_000) return `$${shortNumber.format(value / 1_000)} mil`;
+  return `$${shortNumber.format(value)}`;
+}
 
 const chartAxisStyle = { fill: '#6B7280', fontSize: 12 };
 const chartTooltipStyle = { background: '#FFFFFF', border: '1px solid #E3E6EC', borderRadius: 8, fontSize: 13, boxShadow: '0 4px 12px rgba(28,36,51,0.08)' };
@@ -96,7 +103,9 @@ export default function DashboardPage() {
           icon={TrendingDown}
           label="Rotación 12 meses"
           value={`${kpis.turnoverRatePercent}%`}
-          hint={`${kpis.terminationsLast12Months} bajas sobre la plantilla promedio`}
+          hint={kpis.averageHeadcount != null
+            ? `${kpis.terminationsLast12Months} bajas · plantilla promedio ${kpis.averageHeadcount}`
+            : `${kpis.terminationsLast12Months} bajas sobre la plantilla promedio`}
           accent="clay"
         />
         <StatCard icon={Hourglass} label="Antigüedad promedio" value={`${kpis.averageTenureYears} años`} hint="Empleados activos" />
@@ -115,8 +124,8 @@ export default function DashboardPage() {
                 <YAxis allowDecimals={false} tick={chartAxisStyle} axisLine={false} tickLine={false} width={30} />
                 <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="altas" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
-                <Line type="monotone" dataKey="bajas" stroke="#D64545" strokeWidth={2.5} dot={{ r: 3, fill: '#D64545' }} />
+                <Line type="linear" dataKey="altas" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
+                <Line type="linear" dataKey="bajas" stroke="#D64545" strokeWidth={2.5} dot={{ r: 3, fill: '#D64545' }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -135,14 +144,16 @@ export default function DashboardPage() {
         <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
           <h2 className="font-display text-lg text-paper-100">Nómina por departamento</h2>
           <p className="mt-0.5 text-xs text-paper-100/40">Solo empleados activos</p>
-          <div className="mt-5 h-64">
+          <div className="mt-5" style={{ height: Math.max(payrollChartData.length * 44, 160) }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={payrollChartData} margin={{ left: -10, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E3E6EC" vertical={false} />
-                <XAxis dataKey="name" tick={chartAxisStyle} axisLine={{ stroke: '#E3E6EC' }} tickLine={false} />
-                <YAxis tick={chartAxisStyle} axisLine={false} tickLine={false} width={55} />
-                <Tooltip formatter={(value) => currency.format(value)} contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} />
-                <Bar dataKey="nómina" fill="#2F5BD1" radius={[4, 4, 0, 0]} />
+              <BarChart data={payrollChartData} layout="vertical" margin={{ left: 0, right: 56 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E3E6EC" horizontal={false} />
+                <XAxis type="number" tickFormatter={compactMoney} tick={chartAxisStyle} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" width={118} interval={0} tick={chartAxisStyle} axisLine={false} tickLine={false} />
+                <Tooltip formatter={(value) => currency.format(value)} contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} cursor={{ fill: '#F1F3F7' }} />
+                <Bar dataKey="nómina" fill="#2F5BD1" radius={[0, 4, 4, 0]} barSize={20}>
+                  <LabelList dataKey="nómina" position="right" formatter={compactMoney} style={{ fill: '#4B5563', fontSize: 12 }} />
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
