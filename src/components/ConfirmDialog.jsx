@@ -1,8 +1,10 @@
+import Modal from './Modal';
+
 export default function ConfirmDialog({ open, title, message, confirmLabel = 'Confirmar', danger = false, onConfirm, onCancel }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
+    <Modal onClose={onCancel}>
       <div className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6 shadow-xl">
         <h3 className="font-display text-lg text-paper-100">{title}</h3>
         <p className="mt-2 text-sm text-paper-100/70">{message}</p>
@@ -17,7 +19,7 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
             onClick={onConfirm}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
               danger
-                ? 'bg-clay-500 text-paper-100 hover:bg-clay-600'
+                ? 'bg-clay-600 text-white hover:opacity-90'
                 : 'bg-gold-500 text-white hover:bg-gold-400'
             }`}
           >
@@ -25,6 +27,6 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -19,19 +19,22 @@ function compactMoney(value) {
   return `$${shortNumber.format(value)}`;
 }
 
+// Sin animación de entrada en las gráficas si el sistema pide reducir el movimiento.
+const reduceMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
 const chartAxisStyle = { fill: '#6B7280', fontSize: 12 };
 const chartTooltipStyle = { background: '#FFFFFF', border: '1px solid #E3E6EC', borderRadius: 8, fontSize: 13, boxShadow: '0 4px 12px rgba(28,36,51,0.08)' };
 
 function StatCard({ icon: Icon, label, value, hint, accent = 'gold' }) {
-  const accentClasses = { gold: 'text-gold-500', sage: 'text-sage-500', clay: 'text-clay-500' };
+  const accentClasses = { gold: 'text-gold-500', sage: 'text-sage-600', clay: 'text-clay-600' };
   return (
     <div className="rounded-lg border border-ink-700 bg-ink-900 p-4 sm:p-5">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs uppercase tracking-wide text-paper-100/60">{label}</p>
+        <p className="text-xs uppercase tracking-wide text-paper-100/70">{label}</p>
         <Icon className={`h-4 w-4 ${accentClasses[accent]}`} strokeWidth={1.75} />
       </div>
       <p className="mt-2 font-display text-xl text-paper-100 sm:mt-3 sm:text-2xl">{value}</p>
-      {hint && <p className="mt-1 text-xs text-paper-100/40">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-paper-100/70">{hint}</p>}
     </div>
   );
 }
@@ -64,7 +67,7 @@ export default function DashboardPage() {
     }
   }
 
-  if (error) return <p className="text-sm text-clay-500">{error}</p>;
+  if (error) return <p className="text-sm text-clay-600">{error}</p>;
   const loaded = summary && kpis;
 
   const totalPayroll = loaded ? summary.reduce((sum, d) => sum + d.totalPayroll, 0) : 0;
@@ -76,7 +79,7 @@ export default function DashboardPage() {
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl text-paper-100">Resumen general</h1>
-          <p className="mt-1 text-sm text-paper-100/50">Datos agregados por departamento y tendencias de los últimos 12 meses</p>
+          <p className="mt-1 text-sm text-paper-100/70">Datos agregados por departamento y tendencias de los últimos 12 meses</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -133,7 +136,7 @@ export default function DashboardPage() {
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
           <h2 className="font-display text-lg text-paper-100">Altas y bajas por mes</h2>
-          <p className="mt-0.5 text-xs text-paper-100/40">Últimos 12 meses</p>
+          <p className="mt-0.5 text-xs text-paper-100/70">Últimos 12 meses</p>
           <div className="mt-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={hiringChartData} margin={{ left: -10, right: 10 }}>
@@ -142,14 +145,14 @@ export default function DashboardPage() {
                 <YAxis allowDecimals={false} tick={chartAxisStyle} axisLine={false} tickLine={false} width={30} />
                 <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="linear" dataKey="altas" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
-                <Line type="linear" dataKey="bajas" stroke="#D64545" strokeWidth={2.5} dot={{ r: 3, fill: '#D64545' }} />
+                <Line isAnimationActive={!reduceMotion} type="linear" dataKey="altas" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
+                <Line isAnimationActive={!reduceMotion} type="linear" dataKey="bajas" stroke="#B83838" strokeWidth={2.5} dot={{ r: 3, fill: '#B83838' }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
           {kpis.terminationsByReason.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2 text-xs">
-              <span className="text-paper-100/40">Bajas por motivo:</span>
+              <span className="text-paper-100/70">Bajas por motivo:</span>
               {kpis.terminationsByReason.map((r) => (
                 <span key={r.reason} className="rounded-full bg-clay-500/10 px-2.5 py-0.5 text-clay-600">
                   {terminationReasons[r.reason] ?? r.reason}: {r.count}
@@ -161,7 +164,7 @@ export default function DashboardPage() {
 
         <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
           <h2 className="font-display text-lg text-paper-100">Nómina por departamento</h2>
-          <p className="mt-0.5 text-xs text-paper-100/40">Solo empleados activos</p>
+          <p className="mt-0.5 text-xs text-paper-100/70">Solo empleados activos</p>
           <div className="mt-5" style={{ height: Math.max(payrollChartData.length * 44, 160) }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={payrollChartData} layout="vertical" margin={{ left: 0, right: 56 }}>
@@ -169,7 +172,7 @@ export default function DashboardPage() {
                 <XAxis type="number" tickFormatter={compactMoney} tick={chartAxisStyle} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="name" width={118} interval={0} tick={chartAxisStyle} axisLine={false} tickLine={false} />
                 <Tooltip formatter={(value) => currency.format(value)} contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} cursor={{ fill: '#F1F3F7' }} />
-                <Bar dataKey="nómina" fill="#2F5BD1" radius={[0, 4, 4, 0]} barSize={20}>
+                <Bar isAnimationActive={!reduceMotion} dataKey="nómina" fill="#2F5BD1" radius={[0, 4, 4, 0]} barSize={20}>
                   <LabelList dataKey="nómina" position="right" formatter={compactMoney} style={{ fill: '#4B5563', fontSize: 12 }} />
                 </Bar>
               </BarChart>
@@ -181,7 +184,7 @@ export default function DashboardPage() {
       <div className="mt-8 overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
         <table className="w-full min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
+            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/70">
               <th className="px-5 py-3 font-normal">Departamento</th>
               <th className="px-5 py-3 font-normal">Total</th>
               <th className="px-5 py-3 font-normal">Activos</th>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import Modal from '../components/Modal';
 import { Link } from 'react-router-dom';
 import { Check, X, AlertCircle } from 'lucide-react';
 import { leaveApi } from '../api/leave';
@@ -46,7 +47,7 @@ export default function LeaveRequestsPage() {
     <div>
       <header className="mb-6">
         <h1 className="font-display text-3xl text-paper-100">Solicitudes de ausencia</h1>
-        <p className="mt-1 text-sm text-paper-100/50">Vacaciones, incapacidades y permisos de la plantilla</p>
+        <p className="mt-1 text-sm text-paper-100/70">Vacaciones, incapacidades y permisos de la plantilla</p>
       </header>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -63,13 +64,13 @@ export default function LeaveRequestsPage() {
         ))}
       </div>
 
-      {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
+      {error && <p className="mb-4 text-sm text-clay-600">{error}</p>}
 
       <ul className={`space-y-3 transition-opacity sm:hidden ${loading && requests ? 'opacity-50' : ''}`} aria-busy={loading}>
         {!requests ? (
           <SkeletonCards count={3} withActions />
         ) : requests.length === 0 ? (
-          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">No hay solicitudes en esta vista.</li>
+          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/70">No hay solicitudes en esta vista.</li>
         ) : (
           requests.map((r) => {
             const st = leaveStatuses[r.status] ?? leaveStatuses.Pending;
@@ -83,8 +84,8 @@ export default function LeaveRequestsPage() {
                   <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${st.classes}`}>{st.label}</span>
                 </div>
                 <p className="mt-1 text-sm text-paper-100/70">{formatDate(r.startDate)} – {formatDate(r.endDate)} · {r.days} {r.days === 1 ? 'día' : 'días'}</p>
-                {r.reason && <p className="mt-1 text-sm text-paper-100/60">{r.reason}</p>}
-                {r.reviewedBy && <p className="mt-1 text-xs text-paper-100/60">por {r.reviewedBy}{r.reviewComment ? `: “${r.reviewComment}”` : ''}</p>}
+                {r.reason && <p className="mt-1 text-sm text-paper-100/70">{r.reason}</p>}
+                {r.reviewedBy && <p className="mt-1 text-xs text-paper-100/70">por {r.reviewedBy}{r.reviewComment ? `: “${r.reviewComment}”` : ''}</p>}
                 {r.status === 'Pending' && (
                   <div className="mt-3 flex gap-2 border-t border-ink-700 pt-3">
                     <button onClick={() => setReviewing({ request: r, action: 'approve' })} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-sage-600">
@@ -104,7 +105,7 @@ export default function LeaveRequestsPage() {
       <div className="hidden overflow-x-auto rounded-lg border border-ink-700 bg-ink-900 sm:block">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
-            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
+            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/70">
               <th className="px-5 py-3 font-normal">Empleado</th>
               <th className="px-5 py-3 font-normal">Tipo</th>
               <th className="px-5 py-3 font-normal">Fechas</th>
@@ -117,7 +118,7 @@ export default function LeaveRequestsPage() {
             {!requests ? (
               <SkeletonRows rows={4} cols={6} />
             ) : requests.length === 0 ? (
-              <tr><td colSpan={6} className="py-12 text-center text-paper-100/40">No hay solicitudes en esta vista.</td></tr>
+              <tr><td colSpan={6} className="py-12 text-center text-paper-100/70">No hay solicitudes en esta vista.</td></tr>
             ) : (
               requests.map((r) => {
                 const st = leaveStatuses[r.status] ?? leaveStatuses.Pending;
@@ -125,22 +126,22 @@ export default function LeaveRequestsPage() {
                   <tr key={r.id} className="border-b border-ink-700/60 last:border-0">
                     <td className="px-5 py-3">
                       <Link to={`/empleados/${r.employeeId}`} className="text-paper-100 transition hover:text-gold-600">{r.employeeName}</Link>
-                      {r.reason && <p className="text-xs text-paper-100/40">{r.reason}</p>}
+                      {r.reason && <p className="text-xs text-paper-100/70">{r.reason}</p>}
                     </td>
                     <td className="px-5 py-3 text-paper-100/70">{leaveTypes[r.type] ?? r.type}</td>
                     <td className="px-5 py-3 text-paper-100/70">{formatDate(r.startDate)} – {formatDate(r.endDate)}</td>
                     <td className="px-5 py-3 text-paper-100/70">{r.days}</td>
                     <td className="px-5 py-3">
                       <span className={`rounded-full px-2.5 py-1 text-xs ${st.classes}`}>{st.label}</span>
-                      {r.reviewedBy && <p className="mt-1 text-xs text-paper-100/40">por {r.reviewedBy}{r.reviewComment ? `: “${r.reviewComment}”` : ''}</p>}
+                      {r.reviewedBy && <p className="mt-1 text-xs text-paper-100/70">por {r.reviewedBy}{r.reviewComment ? `: “${r.reviewComment}”` : ''}</p>}
                     </td>
                     <td className="px-5 py-3">
                       {r.status === 'Pending' && (
                         <div className="flex justify-end gap-2">
-                          <button onClick={() => setReviewing({ request: r, action: 'approve' })} title="Aprobar" className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-sage-500">
+                          <button onClick={() => setReviewing({ request: r, action: 'approve' })} title="Aprobar" aria-label={`Aprobar solicitud de ${r.employeeName}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-sage-600">
                             <Check className="h-4 w-4" strokeWidth={2} />
                           </button>
-                          <button onClick={() => setReviewing({ request: r, action: 'reject' })} title="Rechazar" className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-clay-500">
+                          <button onClick={() => setReviewing({ request: r, action: 'reject' })} title="Rechazar" aria-label={`Rechazar solicitud de ${r.employeeName}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-clay-600">
                             <X className="h-4 w-4" strokeWidth={2} />
                           </button>
                         </div>
@@ -179,7 +180,7 @@ function ReviewDialog({ reviewing, onSubmit, onCancel }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
+    <Modal onClose={onCancel}>
       <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6 shadow-xl">
         <h3 className="font-display text-lg text-paper-100">{isReject ? 'Rechazar solicitud' : 'Aprobar solicitud'}</h3>
         <p className="mt-2 text-sm text-paper-100/70">
@@ -191,7 +192,7 @@ function ReviewDialog({ reviewing, onSubmit, onCancel }) {
         </label>
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{error}</span>
           </div>
@@ -203,7 +204,7 @@ function ReviewDialog({ reviewing, onSubmit, onCancel }) {
             type="submit"
             disabled={saving}
             className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white transition disabled:opacity-60 ${
-              isReject ? 'bg-clay-500 hover:bg-clay-600' : 'bg-sage-500 hover:bg-sage-600'
+              isReject ? 'bg-clay-600 hover:opacity-90' : 'bg-sage-600 hover:opacity-90'
             }`}
           >
             {saving && <Spinner size={14} />}
@@ -211,6 +212,6 @@ function ReviewDialog({ reviewing, onSubmit, onCancel }) {
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 }

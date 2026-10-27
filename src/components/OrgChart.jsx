@@ -29,7 +29,7 @@ export default function OrgChart({ departments }) {
       .catch((err) => setError(getErrorMessage(err, 'No se pudo cargar el organigrama.')));
   }, []);
 
-  if (error) return <p className="text-sm text-clay-500">{error}</p>;
+  if (error) return <p className="text-sm text-clay-600">{error}</p>;
   if (!employeesByDept) return <div className="flex justify-center pt-16"><Spinner size={24} /></div>;
 
   return (
@@ -60,7 +60,7 @@ export default function OrgChart({ departments }) {
                   title="Ver empleados"
                 >
                   <p className="text-sm font-medium text-paper-100">{dept.name}</p>
-                  <p className="text-xs text-paper-100/40">
+                  <p className="text-xs text-paper-100/70">
                     {dept.employeeCount} persona{dept.employeeCount !== 1 ? 's' : ''}
                   </p>
                 </button>
@@ -75,11 +75,11 @@ export default function OrgChart({ departments }) {
                           className="min-w-[160px] rounded-md border border-ink-700 bg-white px-3 py-1.5 text-center"
                         >
                           <p className="truncate text-xs text-paper-100">{emp.fullName}</p>
-                          <p className="truncate text-[10px] text-paper-100/40">{emp.position}</p>
+                          <p className="truncate text-[10px] text-paper-100/70">{emp.position}</p>
                         </div>
                       ))}
                       {extra > 0 && (
-                        <p className="pt-0.5 text-center text-[11px] text-paper-100/40">+{extra} más</p>
+                        <p className="pt-0.5 text-center text-[11px] text-paper-100/70">+{extra} más</p>
                       )}
                     </div>
                   </>

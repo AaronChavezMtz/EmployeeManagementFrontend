@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Modal from './Modal';
 import { AlertCircle } from 'lucide-react';
 import { terminationReasons, todayInputValue } from '../utils/labels';
 import Spinner from './Spinner';
@@ -25,14 +26,14 @@ function FormDialog({ open, title, message, confirmLabel, danger, onConfirm, onC
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
+    <Modal onClose={onCancel}>
       <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6 shadow-xl">
         <h3 className="font-display text-lg text-paper-100">{title}</h3>
         <p className="mt-2 text-sm text-paper-100/70">{message}</p>
         <div className="mt-4 space-y-4">{children}</div>
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{error}</span>
           </div>
@@ -46,7 +47,7 @@ function FormDialog({ open, title, message, confirmLabel, danger, onConfirm, onC
             type="submit"
             disabled={saving}
             className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition disabled:opacity-60 ${
-              danger ? 'bg-clay-500 text-white hover:bg-clay-600' : 'bg-gold-500 text-white hover:bg-gold-400'
+              danger ? 'bg-clay-600 text-white hover:opacity-90' : 'bg-gold-500 text-white hover:bg-gold-400'
             }`}
           >
             {saving && <Spinner size={14} />}
@@ -54,7 +55,7 @@ function FormDialog({ open, title, message, confirmLabel, danger, onConfirm, onC
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 }
 

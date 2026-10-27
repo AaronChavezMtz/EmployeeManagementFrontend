@@ -121,7 +121,7 @@ export default function EmployeesPage() {
           <h1 className="font-display text-3xl text-paper-100">Empleados</h1>
           {firstLoad
             ? <Skeleton className="mt-2 h-4 w-24" />
-            : <p className="mt-1 text-sm text-paper-100/50">{data.totalCount} registrados</p>}
+            : <p className="mt-1 text-sm text-paper-100/70">{data.totalCount} registrados</p>}
         </div>
         <div className="flex gap-2">
           <button
@@ -146,10 +146,11 @@ export default function EmployeesPage() {
 
       <div className="mb-5 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
         <div className="relative sm:min-w-[220px] sm:flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-paper-100/40" strokeWidth={1.75} />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-paper-100/70" strokeWidth={1.75} />
           <input
             type="text"
             placeholder="Buscar por nombre, correo o puesto..."
+            aria-label="Buscar empleados"
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
             className="w-full rounded-md border border-ink-600 bg-ink-900 py-2.5 pl-9 pr-3 text-sm text-paper-100 outline-none transition focus:border-gold-500"
@@ -159,6 +160,7 @@ export default function EmployeesPage() {
         <select
           value={filters.departmentId}
           onChange={(e) => updateFilter('departmentId', e.target.value)}
+          aria-label="Filtrar por departamento"
           className="w-full rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500 sm:w-auto"
         >
           <option value="">Todos los departamentos</option>
@@ -170,6 +172,7 @@ export default function EmployeesPage() {
         <select
           value={filters.isActive}
           onChange={(e) => updateFilter('isActive', e.target.value)}
+          aria-label="Filtrar por estado"
           className="w-full rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500 sm:w-auto"
         >
           <option value="">Activos e inactivos</option>
@@ -180,6 +183,7 @@ export default function EmployeesPage() {
         <select
           value={filters.sortBy}
           onChange={(e) => updateFilter('sortBy', e.target.value)}
+          aria-label="Ordenar por"
           className="w-full rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500 sm:w-auto"
         >
           <option value="lastname">Ordenar: Apellido</option>
@@ -189,14 +193,14 @@ export default function EmployeesPage() {
         </select>
       </div>
 
-      {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
+      {error && <p className="mb-4 text-sm text-clay-600">{error}</p>}
 
       {/* Móvil: una tarjeta por empleado, con todas las acciones a la vista. */}
       <ul className={`space-y-3 transition-opacity sm:hidden ${refreshing ? 'opacity-50' : ''}`} aria-busy={loading}>
         {firstLoad ? (
           <SkeletonCards count={5} withActions={isAdmin} />
         ) : data.items.length === 0 ? (
-          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">Sin resultados para este filtro.</li>
+          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/70">Sin resultados para este filtro.</li>
         ) : (
           data.items.map((emp) => (
             <li key={emp.id} className="rounded-lg border border-ink-700 bg-ink-900 p-4">
@@ -205,11 +209,11 @@ export default function EmployeesPage() {
                   <Link to={`/empleados/${emp.id}`} className="font-medium text-paper-100">{emp.fullName}</Link>
                   <p className="truncate text-sm text-paper-100/70">{emp.position} · {emp.departmentName}</p>
                 </div>
-                <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-sage-500/15 text-sage-600' : 'bg-ink-700 text-paper-100/60'}`}>
+                <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-sage-500/15 text-sage-700' : 'bg-ink-700 text-paper-100/70'}`}>
                   {emp.isActive ? 'Activo' : 'Inactivo'}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-paper-100">{currency.format(emp.salary)} <span className="text-paper-100/60">mensual</span></p>
+              <p className="mt-2 text-sm text-paper-100">{currency.format(emp.salary)} <span className="text-paper-100/70">mensual</span></p>
               {isAdmin && (
                 <div className="mt-3 flex gap-2 border-t border-ink-700 pt-3">
                   <Link to={`/empleados/${emp.id}/editar`} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-paper-100/80">
@@ -217,7 +221,7 @@ export default function EmployeesPage() {
                   </Link>
                   {emp.isActive ? (
                     <button onClick={() => setToTerminate(emp)} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-paper-100/80">
-                      <UserMinus className="h-4 w-4 text-clay-500" strokeWidth={1.75} /> Dar de baja
+                      <UserMinus className="h-4 w-4 text-clay-600" strokeWidth={1.75} /> Dar de baja
                     </button>
                   ) : (
                     <button onClick={() => setToRehire(emp)} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-sage-600">
@@ -234,7 +238,7 @@ export default function EmployeesPage() {
       <div className="hidden overflow-x-auto rounded-lg border border-ink-700 bg-ink-900 sm:block">
         <table className="w-full min-w-[720px] text-sm">
           <thead>
-            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
+            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/70">
               <th className="px-5 py-3 font-normal">Nombre</th>
               <th className="px-5 py-3 font-normal">Departamento</th>
               <th className="px-5 py-3 font-normal">Puesto</th>
@@ -247,7 +251,7 @@ export default function EmployeesPage() {
             {firstLoad ? (
               <SkeletonRows rows={8} cols={isAdmin ? 6 : 5} />
             ) : data.items.length === 0 ? (
-              <tr><td colSpan={6} className="py-12 text-center text-paper-100/40">Sin resultados para este filtro.</td></tr>
+              <tr><td colSpan={6} className="py-12 text-center text-paper-100/70">Sin resultados para este filtro.</td></tr>
             ) : (
               data.items.map((emp) => (
                 <tr key={emp.id} className="border-b border-ink-700/60 last:border-0 hover:bg-ink-800/50">
@@ -255,28 +259,28 @@ export default function EmployeesPage() {
                     <Link to={`/empleados/${emp.id}`} className="text-paper-100 transition hover:text-gold-600">
                       {emp.fullName}
                     </Link>
-                    <p className="text-xs text-paper-100/40">{emp.email}</p>
+                    <p className="text-xs text-paper-100/70">{emp.email}</p>
                   </td>
                   <td className="px-5 py-3 text-paper-100/70">{emp.departmentName}</td>
                   <td className="px-5 py-3 text-paper-100/70">{emp.position}</td>
                   <td className="px-5 py-3 text-paper-100/70">{currency.format(emp.salary)}</td>
                   <td className="px-5 py-3">
-                    <span className={`rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-sage-500/15 text-sage-500' : 'bg-ink-700 text-paper-100/40'}`}>
+                    <span className={`rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-sage-500/15 text-sage-700' : 'bg-ink-700 text-paper-100/70'}`}>
                       {emp.isActive ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   {isAdmin && (
                     <td className="px-5 py-3">
                       <div className="flex justify-end gap-2">
-                        <Link to={`/empleados/${emp.id}/editar`} className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-gold-400">
+                        <Link to={`/empleados/${emp.id}/editar`} aria-label={`Editar a ${emp.fullName}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-gold-400">
                           <Pencil className="h-4 w-4" strokeWidth={1.75} />
                         </Link>
                         {emp.isActive ? (
-                          <button onClick={() => setToTerminate(emp)} title="Dar de baja" className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-clay-500">
+                          <button onClick={() => setToTerminate(emp)} title="Dar de baja" aria-label={`Dar de baja a ${emp.fullName}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-clay-600">
                             <UserMinus className="h-4 w-4" strokeWidth={1.75} />
                           </button>
                         ) : (
-                          <button onClick={() => setToRehire(emp)} title="Recontratar" className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-sage-500">
+                          <button onClick={() => setToRehire(emp)} title="Recontratar" aria-label={`Recontratar a ${emp.fullName}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-sage-600">
                             <UserPlus className="h-4 w-4" strokeWidth={1.75} />
                           </button>
                         )}
@@ -291,12 +295,13 @@ export default function EmployeesPage() {
       </div>
 
       {data.totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between text-sm text-paper-100/50">
+        <div className="mt-4 flex items-center justify-between text-sm text-paper-100/70">
           <span>Página {data.pageNumber} de {data.totalPages}</span>
           <div className="flex gap-2">
             <button
               disabled={data.pageNumber <= 1}
               onClick={() => updateFilter('pageNumber', data.pageNumber - 1)}
+              aria-label="Página anterior"
               className="rounded-md border border-ink-600 p-1.5 transition hover:bg-ink-800 disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
@@ -304,6 +309,7 @@ export default function EmployeesPage() {
             <button
               disabled={data.pageNumber >= data.totalPages}
               onClick={() => updateFilter('pageNumber', data.pageNumber + 1)}
+              aria-label="Página siguiente"
               className="rounded-md border border-ink-600 p-1.5 transition hover:bg-ink-800 disabled:opacity-30"
             >
               <ChevronRight className="h-4 w-4" strokeWidth={1.75} />

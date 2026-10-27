@@ -16,9 +16,9 @@ const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: '
 function InfoRow({ icon: Icon, label, value }) {
   return (
     <div className="flex items-start gap-3">
-      <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-paper-100/40" strokeWidth={1.75} />
+      <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-paper-100/70" strokeWidth={1.75} />
       <div>
-        <p className="text-xs text-paper-100/40">{label}</p>
+        <p className="text-xs text-paper-100/70">{label}</p>
         <div className="text-sm text-paper-100">{value}</div>
       </div>
     </div>
@@ -54,12 +54,12 @@ export default function EmployeeDetailPage() {
     }
   }
 
-  if (error) return <p className="text-sm text-clay-500">{error}</p>;
+  if (error) return <p className="text-sm text-clay-600">{error}</p>;
   const loaded = !!employee;
 
   return (
     <div className="max-w-3xl">
-      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-paper-100/50 transition hover:text-paper-100">
+      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-paper-100/70 transition hover:text-paper-100">
         <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
         Volver a empleados
       </Link>
@@ -75,14 +75,14 @@ export default function EmployeeDetailPage() {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="font-display text-2xl text-paper-100">{employee.fullName}</h1>
-            <p className="mt-1 text-sm text-paper-100/50">{employee.position} · {employee.departmentName}</p>
+            <p className="mt-1 text-sm text-paper-100/70">{employee.position} · {employee.departmentName}</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className={`rounded-full px-2.5 py-1 text-xs ${employee.isActive ? 'bg-sage-500/15 text-sage-600' : 'bg-ink-700 text-paper-100/40'}`}>
+            <span className={`rounded-full px-2.5 py-1 text-xs ${employee.isActive ? 'bg-sage-500/15 text-sage-700' : 'bg-ink-700 text-paper-100/70'}`}>
               {employee.isActive ? 'Activo' : 'Inactivo'}
             </span>
             {isAdmin && (
-              <Link to={`/empleados/${employee.id}/editar`} className="rounded-md p-2 text-paper-100/50 transition hover:bg-ink-700 hover:text-gold-500">
+              <Link to={`/empleados/${employee.id}/editar`} aria-label="Editar empleado" className="rounded-md p-2 text-paper-100/70 transition hover:bg-ink-700 hover:text-gold-500">
                 <Pencil className="h-4 w-4" strokeWidth={1.75} />
               </Link>
             )}

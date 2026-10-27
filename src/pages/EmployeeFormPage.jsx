@@ -104,7 +104,7 @@ export default function EmployeeFormPage() {
 
   return (
     <div className="max-w-2xl">
-      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-paper-100/50 transition hover:text-paper-100">
+      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-paper-100/70 transition hover:text-paper-100">
         <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
         Volver a empleados
       </Link>
@@ -166,13 +166,13 @@ export default function EmployeeFormPage() {
               onChange={(e) => handleChange('grantPortalAccess', e.target.checked)} />
             <span>
               <span className="block text-paper-100">Dar acceso al portal del empleado</span>
-              <span className="block text-xs text-paper-100/50">Se crea su usuario con el correo y una contraseña temporal que verás al guardar.</span>
+              <span className="block text-xs text-paper-100/70">Se crea su usuario con el correo y una contraseña temporal que verás al guardar.</span>
             </span>
           </label>
         )}
 
         {generalError && (
-          <div className="mt-5 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+          <div className="mt-5 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{generalError}</span>
           </div>
@@ -205,7 +205,7 @@ function Field({ label, error, children }) {
     <label className="block text-sm">
       <span className="mb-1.5 block text-paper-100/70">{label}</span>
       {children}
-      {error && <span className="mt-1 block text-xs text-clay-500">{error}</span>}
+      {error && <span className="mt-1 block text-xs text-clay-600">{error}</span>}
     </label>
   );
 }

@@ -25,17 +25,18 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2 px-4 sm:px-0">
+      <div role="region" aria-label="Notificaciones" aria-live="polite" className="fixed bottom-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2 px-4 sm:px-0">
         {toasts.map(({ id, message, type }) => {
           const { icon: Icon, classes } = styles[type] ?? styles.info;
           return (
             <div
               key={id}
+              role={type === 'error' ? 'alert' : 'status'}
               className={`flex items-start gap-2.5 rounded-lg border bg-white px-4 py-3 text-sm shadow-lg shadow-black/10 ${classes}`}
             >
               <Icon className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
               <p className="flex-1 text-paper-100">{message}</p>
-              <button onClick={() => dismiss(id)} className="text-paper-100/30 transition hover:text-paper-100/60">
+              <button onClick={() => dismiss(id)} aria-label="Cerrar aviso" className="text-paper-100/70 transition hover:text-paper-100/70">
                 <X className="h-3.5 w-3.5" strokeWidth={1.75} />
               </button>
             </div>

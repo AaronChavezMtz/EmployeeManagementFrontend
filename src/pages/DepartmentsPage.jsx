@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import Modal from '../components/Modal';
 import { Plus, Pencil, Trash2, AlertCircle, X, LayoutGrid, Network } from 'lucide-react';
 import { departmentsApi } from '../api/departments';
 import { useAuth } from '../context/AuthContext';
@@ -47,14 +48,14 @@ export default function DepartmentsPage() {
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-paper-100">Departamentos</h1>
-          <p className="mt-1 text-sm text-paper-100/50">{departments.length} registrados</p>
+          <p className="mt-1 text-sm text-paper-100/70">{departments.length} registrados</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex rounded-md border border-ink-600 p-0.5">
             <button
               onClick={() => setView('cards')}
               className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs transition ${
-                view === 'cards' ? 'bg-gold-500 text-white' : 'text-paper-100/60 hover:text-paper-100'
+                view === 'cards' ? 'bg-gold-500 text-white' : 'text-paper-100/70 hover:text-paper-100'
               }`}
             >
               <LayoutGrid className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -63,7 +64,7 @@ export default function DepartmentsPage() {
             <button
               onClick={() => setView('orgchart')}
               className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs transition ${
-                view === 'orgchart' ? 'bg-gold-500 text-white' : 'text-paper-100/60 hover:text-paper-100'
+                view === 'orgchart' ? 'bg-gold-500 text-white' : 'text-paper-100/70 hover:text-paper-100'
               }`}
             >
               <Network className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -82,7 +83,7 @@ export default function DepartmentsPage() {
         </div>
       </header>
 
-      {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
+      {error && <p className="mb-4 text-sm text-clay-600">{error}</p>}
 
       {loading && departments.length === 0 ? (
         <Loading className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -105,18 +106,18 @@ export default function DepartmentsPage() {
                 <h3 className="font-display text-lg text-paper-100">{d.name}</h3>
                 {isAdmin && (
                   <div className="flex gap-1">
-                    <button onClick={() => setEditing(d)} className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-gold-400">
+                    <button onClick={() => setEditing(d)} aria-label={`Editar ${d.name}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-gold-400">
                       <Pencil className="h-3.5 w-3.5" strokeWidth={1.75} />
                     </button>
-                    <button onClick={() => setToDelete(d)} className="rounded-md p-1.5 text-paper-100/50 transition hover:bg-ink-700 hover:text-clay-500">
+                    <button onClick={() => setToDelete(d)} aria-label={`Eliminar ${d.name}`} className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-clay-600">
                       <Trash2 className="h-3.5 w-3.5" strokeWidth={1.75} />
                     </button>
                   </div>
                 )}
               </div>
-              <p className="mt-1.5 text-sm text-paper-100/50">{d.description || 'Sin descripción'}</p>
+              <p className="mt-1.5 text-sm text-paper-100/70">{d.description || 'Sin descripción'}</p>
               <div className="ledger-divider my-4" />
-              <p className="text-xs uppercase tracking-wide text-paper-100/40">
+              <p className="text-xs uppercase tracking-wide text-paper-100/70">
                 {d.employeeCount} empleado{d.employeeCount !== 1 ? 's' : ''} activo{d.employeeCount !== 1 ? 's' : ''}
               </p>
             </div>
@@ -174,11 +175,11 @@ function DepartmentModal({ initial, onClose, onSaved, showToast }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
+    <Modal onClose={onClose}>
       <div className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6">
         <div className="mb-5 flex items-center justify-between">
           <h3 className="font-display text-lg text-paper-100">{isEditing ? 'Editar departamento' : 'Nuevo departamento'}</h3>
-          <button onClick={onClose} className="text-paper-100/40 transition hover:text-paper-100">
+          <button onClick={onClose} aria-label="Cerrar" className="rounded-md p-2 text-paper-100/70 transition hover:text-paper-100">
             <X className="h-4 w-4" strokeWidth={1.75} />
           </button>
         </div>
@@ -193,7 +194,7 @@ function DepartmentModal({ initial, onClose, onSaved, showToast }) {
           </label>
 
           {error && (
-            <div className="flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+            <div className="flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
               <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
               <span>{error}</span>
             </div>
@@ -210,6 +211,6 @@ function DepartmentModal({ initial, onClose, onSaved, showToast }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

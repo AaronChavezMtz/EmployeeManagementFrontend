@@ -59,7 +59,7 @@ export default function LoginPage() {
             <BookUser className="h-6 w-6 text-white" strokeWidth={1.75} />
           </span>
           <h1 className="mt-4 font-display text-2xl text-paper-100">Gestor de Empleados</h1>
-          <p className="mt-1 text-sm text-paper-100/50">Panel administrativo de RH</p>
+          <p className="mt-1 text-sm text-paper-100/70">Panel administrativo de RH</p>
         </div>
 
         {/* Formulario */}
@@ -84,7 +84,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+            <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
               <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
               <span>{error}</span>
             </div>
@@ -102,8 +102,8 @@ export default function LoginPage() {
         {/* Cuentas de demostración */}
         <div className="border-t border-ink-700 bg-ink-800/40 px-8 py-6">
           <div className="flex items-center gap-2">
-            <KeyRound className="h-4 w-4 text-paper-100/40" strokeWidth={1.75} />
-            <p className="text-xs font-medium uppercase tracking-wide text-paper-100/50">Acceso de prueba para revisión</p>
+            <KeyRound className="h-4 w-4 text-paper-100/70" strokeWidth={1.75} />
+            <p className="text-xs font-medium uppercase tracking-wide text-paper-100/70">Acceso de prueba para revisión</p>
           </div>
           <div className="mt-3 space-y-2">
             {demoAccounts.map((account) => (
@@ -117,10 +117,10 @@ export default function LoginPage() {
                   <account.icon className="h-4 w-4 text-gold-500" strokeWidth={1.75} />
                   <span>
                     <span className="block text-sm text-paper-100">{account.role}</span>
-                    <span className="block text-xs text-paper-100/40">{account.note}</span>
+                    <span className="block text-xs text-paper-100/70">{account.note}</span>
                   </span>
                 </span>
-                <span className="text-right text-xs text-paper-100/40">
+                <span className="text-right text-xs text-paper-100/70">
                   <span className="block font-mono">{account.username}</span>
                   <span className="block font-mono">{account.password}</span>
                 </span>
