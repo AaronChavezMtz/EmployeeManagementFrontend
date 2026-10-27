@@ -16,10 +16,10 @@ const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: '
 function InfoRow({ icon: Icon, label, value }) {
   return (
     <div className="flex items-start gap-3">
-      <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-paper-100/70" strokeWidth={1.75} />
+      <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-foreground-muted" strokeWidth={1.75} />
       <div>
-        <p className="text-xs text-paper-100/70">{label}</p>
-        <div className="text-sm text-paper-100">{value}</div>
+        <p className="text-xs text-foreground-muted">{label}</p>
+        <div className="text-sm text-foreground">{value}</div>
       </div>
     </div>
   );
@@ -54,12 +54,12 @@ export default function EmployeeDetailPage() {
     }
   }
 
-  if (error) return <p className="text-sm text-clay-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-strong">{error}</p>;
   const loaded = !!employee;
 
   return (
     <div className="max-w-3xl">
-      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-paper-100/70 transition hover:text-paper-100">
+      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-foreground-muted transition hover:text-foreground">
         <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
         Volver a empleados
       </Link>
@@ -71,18 +71,18 @@ export default function EmployeeDetailPage() {
         </Loading>
       ) : (
       <>
-      <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
+      <div className="rounded-lg border border-subtle bg-surface p-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-display text-2xl text-paper-100">{employee.fullName}</h1>
-            <p className="mt-1 text-sm text-paper-100/70">{employee.position} · {employee.departmentName}</p>
+            <h1 className="font-display text-2xl text-foreground">{employee.fullName}</h1>
+            <p className="mt-1 text-sm text-foreground-muted">{employee.position} · {employee.departmentName}</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className={`rounded-full px-2.5 py-1 text-xs ${employee.isActive ? 'bg-sage-500/15 text-sage-700' : 'bg-ink-700 text-paper-100/70'}`}>
+            <span className={`rounded-full px-2.5 py-1 text-xs ${employee.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
               {employee.isActive ? 'Activo' : 'Inactivo'}
             </span>
             {isAdmin && (
-              <Link to={`/empleados/${employee.id}/editar`} aria-label="Editar empleado" className="rounded-md p-2 text-paper-100/70 transition hover:bg-ink-700 hover:text-gold-500">
+              <Link to={`/empleados/${employee.id}/editar`} aria-label="Editar empleado" className="rounded-md p-2 text-foreground-muted transition hover:bg-subtle hover:text-primary">
                 <Pencil className="h-4 w-4" strokeWidth={1.75} />
               </Link>
             )}
@@ -103,7 +103,7 @@ export default function EmployeeDetailPage() {
               employee.portalUsername
             ) : employee.isActive && isAdmin ? (
               <button onClick={createAccess} disabled={creatingAccess}
-                className="text-sm font-medium text-gold-500 transition hover:text-gold-400 disabled:opacity-60">
+                className="text-sm font-medium text-primary transition hover:text-primary-hover disabled:opacity-60">
                 {creatingAccess ? 'Creando...' : 'Crear acceso al portal'}
               </button>
             ) : 'Sin acceso'

@@ -27,27 +27,27 @@ function FormDialog({ open, title, message, confirmLabel, danger, onConfirm, onC
 
   return (
     <Modal onClose={onCancel}>
-      <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6 shadow-xl">
-        <h3 className="font-display text-lg text-paper-100">{title}</h3>
-        <p className="mt-2 text-sm text-paper-100/70">{message}</p>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6 shadow-xl">
+        <h3 className="font-display text-lg text-foreground">{title}</h3>
+        <p className="mt-2 text-sm text-foreground-muted">{message}</p>
         <div className="mt-4 space-y-4">{children}</div>
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger-strong">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{error}</span>
           </div>
         )}
 
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onCancel} className="rounded-md px-4 py-2 text-sm text-paper-100/70 transition hover:text-paper-100">
+          <button type="button" onClick={onCancel} className="rounded-md px-4 py-2 text-sm text-foreground-muted transition hover:text-foreground">
             Cancelar
           </button>
           <button
             type="submit"
             disabled={saving}
             className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition disabled:opacity-60 ${
-              danger ? 'bg-clay-600 text-white hover:opacity-90' : 'bg-gold-500 text-white hover:bg-gold-400'
+              danger ? 'bg-danger-strong text-white hover:opacity-90' : 'bg-primary text-white hover:bg-primary-hover'
             }`}
           >
             {saving && <Spinner size={14} />}
@@ -77,11 +77,11 @@ export function TerminateDialog({ employee, onConfirm, onCancel }) {
       onCancel={onCancel}
     >
       <label className="block text-sm">
-        <span className="mb-1.5 block text-paper-100/70">Fecha de baja</span>
+        <span className="mb-1.5 block text-foreground-muted">Fecha de baja</span>
         <input type="date" className="input" value={date} max={todayInputValue()} onChange={(e) => setDate(e.target.value)} required />
       </label>
       <label className="block text-sm">
-        <span className="mb-1.5 block text-paper-100/70">Motivo</span>
+        <span className="mb-1.5 block text-foreground-muted">Motivo</span>
         <select className="input" value={reason} onChange={(e) => setReason(e.target.value)}>
           {Object.entries(terminationReasons).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
@@ -106,7 +106,7 @@ export function RehireDialog({ employee, onConfirm, onCancel }) {
       onCancel={onCancel}
     >
       <label className="block text-sm">
-        <span className="mb-1.5 block text-paper-100/70">Fecha de recontratación</span>
+        <span className="mb-1.5 block text-foreground-muted">Fecha de recontratación</span>
         <input type="date" className="input" value={date} max={todayInputValue()} onChange={(e) => setDate(e.target.value)} required />
       </label>
     </FormDialog>

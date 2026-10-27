@@ -8,6 +8,7 @@ import { reportsApi } from '../api/reports';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import { colors } from '../theme';
 import { Loading, Skeleton, SkeletonStat } from '../components/Skeleton';
 
 const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
@@ -22,19 +23,19 @@ function compactMoney(value) {
 // Sin animación de entrada en las gráficas si el sistema pide reducir el movimiento.
 const reduceMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-const chartAxisStyle = { fill: '#6B7280', fontSize: 12 };
-const chartTooltipStyle = { background: '#FFFFFF', border: '1px solid #E3E6EC', borderRadius: 8, fontSize: 13, boxShadow: '0 4px 12px rgba(28,36,51,0.08)' };
+const chartAxisStyle = { fill: colors.foreground.muted, fontSize: 12 };
+const chartTooltipStyle = { background: colors.surface, border: `1px solid ${colors.subtle}`, borderRadius: 8, fontSize: 13, boxShadow: '0 4px 12px rgba(28,36,51,0.08)' };
 
 function StatCard({ icon: Icon, label, value, hint, accent = 'gold' }) {
-  const accentClasses = { gold: 'text-gold-500', sage: 'text-sage-600', clay: 'text-clay-600' };
+  const accentClasses = { gold: 'text-primary', sage: 'text-success-strong', clay: 'text-danger-strong' };
   return (
-    <div className="rounded-lg border border-ink-700 bg-ink-900 p-4 sm:p-5">
+    <div className="rounded-lg border border-subtle bg-surface p-4 sm:p-5">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs uppercase tracking-wide text-paper-100/70">{label}</p>
+        <p className="text-xs uppercase tracking-wide text-foreground-muted">{label}</p>
         <Icon className={`h-4 w-4 ${accentClasses[accent]}`} strokeWidth={1.75} />
       </div>
-      <p className="mt-2 font-display text-xl text-paper-100 sm:mt-3 sm:text-2xl">{value}</p>
-      {hint && <p className="mt-1 text-xs text-paper-100/70">{hint}</p>}
+      <p className="mt-2 text-xl font-semibold tabular-nums text-foreground sm:mt-3 sm:text-2xl">{value}</p>
+      {hint && <p className="mt-1 text-xs text-foreground-muted">{hint}</p>}
     </div>
   );
 }
@@ -67,7 +68,7 @@ export default function DashboardPage() {
     }
   }
 
-  if (error) return <p className="text-sm text-clay-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-strong">{error}</p>;
   const loaded = summary && kpis;
 
   const totalPayroll = loaded ? summary.reduce((sum, d) => sum + d.totalPayroll, 0) : 0;
@@ -78,14 +79,14 @@ export default function DashboardPage() {
     <div>
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl text-paper-100">Resumen general</h1>
-          <p className="mt-1 text-sm text-paper-100/70">Datos agregados por departamento y tendencias de los últimos 12 meses</p>
+          <h1 className="font-display text-3xl text-foreground">Resumen general</h1>
+          <p className="mt-1 text-sm text-foreground-muted">Datos agregados por departamento y tendencias de los últimos 12 meses</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => handleExport('excel')}
             disabled={exporting !== ''}
-            className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-md border border-outline bg-surface px-3.5 py-2 text-sm text-foreground/80 transition hover:border-primary hover:text-primary disabled:opacity-50"
           >
             {exporting === 'excel' ? <Spinner size={14} /> : <FileSpreadsheet className="h-4 w-4" strokeWidth={1.75} />}
             Excel
@@ -93,7 +94,7 @@ export default function DashboardPage() {
           <button
             onClick={() => handleExport('pdf')}
             disabled={exporting !== ''}
-            className="flex items-center gap-2 rounded-md border border-ink-600 bg-ink-900 px-3.5 py-2 text-sm text-paper-100/80 transition hover:border-gold-500 hover:text-gold-500 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-md border border-outline bg-surface px-3.5 py-2 text-sm text-foreground/80 transition hover:border-primary hover:text-primary disabled:opacity-50"
           >
             {exporting === 'pdf' ? <Spinner size={14} /> : <FileText className="h-4 w-4" strokeWidth={1.75} />}
             PDF
@@ -108,7 +109,7 @@ export default function DashboardPage() {
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {[0, 1].map((i) => (
-              <div key={i} className="rounded-lg border border-ink-700 bg-ink-900 p-6">
+              <div key={i} className="rounded-lg border border-subtle bg-surface p-6">
                 <Skeleton className="h-5 w-44" />
                 <Skeleton className="mt-2 h-3 w-24" />
                 <Skeleton className="mt-5 h-64 w-full" />
@@ -134,27 +135,27 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
-          <h2 className="font-display text-lg text-paper-100">Altas y bajas por mes</h2>
-          <p className="mt-0.5 text-xs text-paper-100/70">Últimos 12 meses</p>
+        <div className="rounded-lg border border-subtle bg-surface p-6">
+          <h2 className="font-display text-lg text-foreground">Altas y bajas por mes</h2>
+          <p className="mt-0.5 text-xs text-foreground-muted">Últimos 12 meses</p>
           <div className="mt-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={hiringChartData} margin={{ left: -10, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E3E6EC" vertical={false} />
-                <XAxis dataKey="mes" tick={chartAxisStyle} axisLine={{ stroke: '#E3E6EC' }} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.subtle} vertical={false} />
+                <XAxis dataKey="mes" tick={chartAxisStyle} axisLine={{ stroke: colors.subtle }} tickLine={false} />
                 <YAxis allowDecimals={false} tick={chartAxisStyle} axisLine={false} tickLine={false} width={30} />
-                <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} />
+                <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: colors.foreground.DEFAULT }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line isAnimationActive={!reduceMotion} type="linear" dataKey="altas" stroke="#2F5BD1" strokeWidth={2.5} dot={{ r: 3, fill: '#2F5BD1' }} />
-                <Line isAnimationActive={!reduceMotion} type="linear" dataKey="bajas" stroke="#B83838" strokeWidth={2.5} dot={{ r: 3, fill: '#B83838' }} />
+                <Line isAnimationActive={!reduceMotion} type="linear" dataKey="altas" stroke={colors.primary.DEFAULT} strokeWidth={2.5} dot={{ r: 3, fill: colors.primary.DEFAULT }} />
+                <Line isAnimationActive={!reduceMotion} type="linear" dataKey="bajas" stroke={colors.danger.strong} strokeWidth={2.5} dot={{ r: 3, fill: colors.danger.strong }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
           {kpis.terminationsByReason.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2 text-xs">
-              <span className="text-paper-100/70">Bajas por motivo:</span>
+              <span className="text-foreground-muted">Bajas por motivo:</span>
               {kpis.terminationsByReason.map((r) => (
-                <span key={r.reason} className="rounded-full bg-clay-500/10 px-2.5 py-0.5 text-clay-600">
+                <span key={r.reason} className="rounded-full bg-danger/10 px-2.5 py-0.5 text-danger-strong">
                   {terminationReasons[r.reason] ?? r.reason}: {r.count}
                 </span>
               ))}
@@ -162,18 +163,18 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-lg border border-ink-700 bg-ink-900 p-6">
-          <h2 className="font-display text-lg text-paper-100">Nómina por departamento</h2>
-          <p className="mt-0.5 text-xs text-paper-100/70">Solo empleados activos</p>
+        <div className="rounded-lg border border-subtle bg-surface p-6">
+          <h2 className="font-display text-lg text-foreground">Nómina por departamento</h2>
+          <p className="mt-0.5 text-xs text-foreground-muted">Solo empleados activos</p>
           <div className="mt-5" style={{ height: Math.max(payrollChartData.length * 44, 160) }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={payrollChartData} layout="vertical" margin={{ left: 0, right: 56 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E3E6EC" horizontal={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.subtle} horizontal={false} />
                 <XAxis type="number" tickFormatter={compactMoney} tick={chartAxisStyle} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="name" width={118} interval={0} tick={chartAxisStyle} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(value) => currency.format(value)} contentStyle={chartTooltipStyle} labelStyle={{ color: '#1C2433' }} cursor={{ fill: '#F1F3F7' }} />
-                <Bar isAnimationActive={!reduceMotion} dataKey="nómina" fill="#2F5BD1" radius={[0, 4, 4, 0]} barSize={20}>
-                  <LabelList dataKey="nómina" position="right" formatter={compactMoney} style={{ fill: '#4B5563', fontSize: 12 }} />
+                <Tooltip formatter={(value) => currency.format(value)} contentStyle={chartTooltipStyle} labelStyle={{ color: colors.foreground.DEFAULT }} cursor={{ fill: colors.muted }} />
+                <Bar isAnimationActive={!reduceMotion} dataKey="nómina" fill={colors.primary.DEFAULT} radius={[0, 4, 4, 0]} barSize={20}>
+                  <LabelList dataKey="nómina" position="right" formatter={compactMoney} style={{ fill: colors.foreground.muted, fontSize: 12 }} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -181,10 +182,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
-        <table className="w-full min-w-[640px] text-sm">
+      <div className="mt-8 overflow-x-auto rounded-lg border border-subtle bg-surface">
+        <table className="w-full tabular-nums min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/70">
+            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
               <th className="px-5 py-3 font-normal">Departamento</th>
               <th className="px-5 py-3 font-normal">Total</th>
               <th className="px-5 py-3 font-normal">Activos</th>
@@ -194,12 +195,12 @@ export default function DashboardPage() {
           </thead>
           <tbody>
             {summary.map((d) => (
-              <tr key={d.departmentId} className="border-b border-ink-700/60 last:border-0">
-                <td className="px-5 py-3 text-paper-100">{d.departmentName}</td>
-                <td className="px-5 py-3 text-paper-100/70">{d.totalEmployees}</td>
-                <td className="px-5 py-3 text-paper-100/70">{d.activeEmployees}</td>
-                <td className="px-5 py-3 text-paper-100/70">{currency.format(d.averageSalary)}</td>
-                <td className="px-5 py-3 text-paper-100/70">{currency.format(d.totalPayroll)}</td>
+              <tr key={d.departmentId} className="border-b border-subtle/60 last:border-0">
+                <td className="px-5 py-3 text-foreground">{d.departmentName}</td>
+                <td className="px-5 py-3 text-foreground-muted">{d.totalEmployees}</td>
+                <td className="px-5 py-3 text-foreground-muted">{d.activeEmployees}</td>
+                <td className="px-5 py-3 text-foreground-muted">{currency.format(d.averageSalary)}</td>
+                <td className="px-5 py-3 text-foreground-muted">{currency.format(d.totalPayroll)}</td>
               </tr>
             ))}
           </tbody>

@@ -7,7 +7,7 @@
     @apply motion-safe:scroll-smooth;
   }
   body {
-    @apply bg-ink-950 text-paper-100 font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
   }
   /* Placeholders legibles: el gris por defecto queda en ~2.5:1. */
   ::placeholder {
@@ -15,16 +15,16 @@
     opacity: 1;
   }
   ::selection {
-    @apply bg-gold-500/30 text-paper-100;
+    @apply bg-primary/30 text-foreground;
   }
   *:focus-visible {
-    @apply outline-none ring-2 ring-gold-500/70 ring-offset-2 ring-offset-ink-950;
+    @apply outline-none ring-2 ring-primary/70 ring-offset-2 ring-offset-background;
   }
 }
 
 @layer components {
   .input {
-    @apply w-full rounded-md border border-ink-600 bg-ink-800 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500;
+    @apply w-full rounded-md border border-outline bg-muted px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary;
   }
 }
 
@@ -32,8 +32,8 @@
   .ledger-divider {
     background-image: repeating-linear-gradient(
       to right,
-      theme('colors.ink.600') 0,
-      theme('colors.ink.600') 4px,
+      theme('colors.outline') 0,
+      theme('colors.outline') 4px,
       transparent 4px,
       transparent 10px
     );

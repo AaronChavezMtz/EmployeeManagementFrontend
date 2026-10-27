@@ -31,8 +31,8 @@ export const leaveTypes = {
 };
 
 export const leaveStatuses = {
-  Pending: { label: 'Pendiente', classes: 'bg-gold-500/10 text-gold-600' },
-  Approved: { label: 'Aprobada', classes: 'bg-sage-500/15 text-sage-700' },
-  Rejected: { label: 'Rechazada', classes: 'bg-clay-500/10 text-clay-600' },
-  Cancelled: { label: 'Cancelada', classes: 'bg-ink-700 text-paper-100/70' },
+  Pending: { label: 'Pendiente', classes: 'bg-primary/10 text-primary-strong' },
+  Approved: { label: 'Aprobada', classes: 'bg-success/15 text-success-ink' },
+  Rejected: { label: 'Rechazada', classes: 'bg-danger/10 text-danger-strong' },
+  Cancelled: { label: 'Cancelada', classes: 'bg-subtle text-foreground-muted' },
 };

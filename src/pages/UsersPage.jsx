@@ -70,15 +70,15 @@ export default function UsersPage() {
     <div>
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl text-paper-100">Usuarios</h1>
-          <p className="mt-1 text-sm text-paper-100/70">Quién puede entrar al sistema y con qué permisos</p>
+          <h1 className="font-display text-3xl text-foreground">Usuarios</h1>
+          <p className="mt-1 text-sm text-foreground-muted">Quién puede entrar al sistema y con qué permisos</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {canResetDemo && (
             <button
               onClick={() => setConfirmReset(true)}
               disabled={resetting}
-              className="flex items-center gap-2 rounded-md border border-ink-600 px-4 py-2.5 text-sm font-medium text-paper-100/70 transition hover:border-clay-500 hover:text-clay-600 disabled:opacity-60"
+              className="flex items-center gap-2 rounded-md border border-outline px-4 py-2.5 text-sm font-medium text-foreground-muted transition hover:border-danger hover:text-danger-strong disabled:opacity-60"
             >
               {resetting ? <Spinner size={16} /> : <RotateCcw className="h-4 w-4" strokeWidth={2} />}
               Reiniciar demo
@@ -86,7 +86,7 @@ export default function UsersPage() {
           )}
           <button
             onClick={() => setModalUser({})}
-            className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400"
+            className="flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:bg-primary-hover"
           >
             <Plus className="h-4 w-4" strokeWidth={2} />
             Nuevo usuario
@@ -94,12 +94,12 @@ export default function UsersPage() {
         </div>
       </header>
 
-      {error && <p className="mb-4 text-sm text-clay-600">{error}</p>}
+      {error && <p className="mb-4 text-sm text-danger-strong">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
-        <table className="w-full min-w-[720px] text-sm">
+      <div className="overflow-x-auto rounded-lg border border-subtle bg-surface">
+        <table className="w-full tabular-nums min-w-[720px] text-sm">
           <thead>
-            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/70">
+            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
               <th className="px-5 py-3 font-normal">Usuario</th>
               <th className="px-5 py-3 font-normal">Correo</th>
               <th className="px-5 py-3 font-normal">Rol</th>
@@ -118,46 +118,57 @@ export default function UsersPage() {
                 const locked = !u.canEdit;
                 const lockedTitle = isSelf ? 'No puedes cambiar tu propia cuenta' : 'Cuenta de demostración protegida';
                 return (
-                  <tr key={u.id} className="border-b border-ink-700/60 last:border-0">
-                    <td className="px-5 py-3 text-paper-100">
+                  <tr key={u.id} className="border-b border-subtle/60 last:border-0">
+                    <td className="px-5 py-3 text-foreground">
                       <span className="flex items-center gap-1.5">
                         {u.username}
-                        {isSelf && <span className="text-xs text-paper-100/70">(tú)</span>}
-                        {u.isProtected && <Lock className="h-3.5 w-3.5 text-paper-100/70" strokeWidth={1.75} aria-label="Cuenta protegida" />}
+                        {isSelf && <span className="text-xs text-foreground-muted">(tú)</span>}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-paper-100/70">{u.email}</td>
+                    <td className="px-5 py-3 text-foreground-muted">{u.email}</td>
                     <td className="px-5 py-3">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs ${
-                        u.role === 'Admin' ? 'bg-gold-500/10 text-gold-600' : 'bg-ink-700 text-paper-100/70'
+                        u.role === 'Admin' ? 'bg-primary/10 text-primary-strong' : 'bg-subtle text-foreground-muted'
                       }`}>
                         {u.role === 'Admin' ? <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.75} /> : <UserRound className="h-3.5 w-3.5" strokeWidth={1.75} />}
                         {roleLabels[u.role] ?? u.role}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-paper-100/70">{u.employeeName ?? (u.role === 'Employee' ? <span className="text-clay-600">Sin vincular</span> : '—')}</td>
+                    <td className="px-5 py-3 text-foreground-muted">{u.employeeName ?? (u.role === 'Employee' ? <span className="text-danger-strong">Sin vincular</span> : '—')}</td>
                     <td className="px-5 py-3">
-                      <button
-                        onClick={() => toggleActive(u)}
-                        disabled={locked}
-                        title={locked ? lockedTitle : 'Clic para activar o desactivar'}
-                        className={`rounded-full px-2.5 py-1 text-xs transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                          u.isActive ? 'bg-sage-500/15 text-sage-700' : 'bg-ink-700 text-paper-100/70'
-                        }`}
-                      >
-                        {u.isActive ? 'Activo' : 'Inactivo'}
-                      </button>
+                      {/* Sin permiso para cambiarla, el estado es solo informativo: con sus colores normales, no atenuado. */}
+                      {locked ? (
+                        <span className={`rounded-full px-2.5 py-1 text-xs ${u.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
+                          {u.isActive ? 'Activo' : 'Inactivo'}
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => toggleActive(u)}
+                          title="Clic para activar o desactivar"
+                          className={`rounded-full px-2.5 py-1 text-xs transition hover:ring-2 hover:ring-outline ${
+                            u.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'
+                          }`}
+                        >
+                          {u.isActive ? 'Activo' : 'Inactivo'}
+                        </button>
+                      )}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <button
-                        onClick={() => setModalUser(u)}
-                        disabled={locked}
-                        title={locked ? lockedTitle : 'Editar rol y vínculo'}
-                        aria-label={`Editar ${u.username}`}
-                        className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-700 hover:text-gold-500 disabled:cursor-not-allowed disabled:opacity-30"
-                      >
-                        <Pencil className="h-4 w-4" strokeWidth={1.75} />
-                      </button>
+                      {locked ? (
+                        <span title={lockedTitle} className="inline-flex items-center gap-1 rounded-full border border-subtle px-2.5 py-1 text-xs text-foreground-muted">
+                          <Lock className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
+                          {isSelf ? 'Tu cuenta' : 'Protegida'}
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => setModalUser(u)}
+                          title="Editar rol y vínculo"
+                          aria-label={`Editar ${u.username}`}
+                          className="rounded-md p-2.5 text-foreground-muted transition hover:bg-subtle hover:text-primary"
+                        >
+                          <Pencil className="h-4 w-4" strokeWidth={1.75} />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
@@ -233,10 +244,10 @@ function UserModal({ user, users, onClose, onSaved, showToast }) {
 
   return (
     <Modal onClose={onClose}>
-      <div className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6">
+      <div className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6">
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="font-display text-lg text-paper-100">{isEditing ? `Editar ${user.username}` : 'Nuevo usuario'}</h3>
-          <button onClick={onClose} aria-label="Cerrar" className="rounded-md p-2 text-paper-100/70 transition hover:text-paper-100">
+          <h3 className="font-display text-lg text-foreground">{isEditing ? `Editar ${user.username}` : 'Nuevo usuario'}</h3>
+          <button onClick={onClose} aria-label="Cerrar" className="rounded-md p-2 text-foreground-muted transition hover:text-foreground">
             <X className="h-4 w-4" strokeWidth={1.75} />
           </button>
         </div>
@@ -244,21 +255,21 @@ function UserModal({ user, users, onClose, onSaved, showToast }) {
           {!isEditing && (
             <>
               <label className="block text-sm">
-                <span className="mb-1.5 block text-paper-100/70">Usuario</span>
+                <span className="mb-1.5 block text-foreground-muted">Usuario</span>
                 <input className="input" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required minLength={3} />
               </label>
               <label className="block text-sm">
-                <span className="mb-1.5 block text-paper-100/70">Correo</span>
+                <span className="mb-1.5 block text-foreground-muted">Correo</span>
                 <input type="email" className="input" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
               </label>
               <label className="block text-sm">
-                <span className="mb-1.5 block text-paper-100/70">Contraseña</span>
+                <span className="mb-1.5 block text-foreground-muted">Contraseña</span>
                 <input type="password" className="input" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required minLength={8} />
               </label>
             </>
           )}
           <label className="block text-sm">
-            <span className="mb-1.5 block text-paper-100/70">Rol</span>
+            <span className="mb-1.5 block text-foreground-muted">Rol</span>
             <select className="input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
               <option value="Employee">Empleado (portal)</option>
               <option value="Admin">Administrador (RH)</option>
@@ -266,25 +277,25 @@ function UserModal({ user, users, onClose, onSaved, showToast }) {
           </label>
           {form.role === 'Employee' && (
             <label className="block text-sm">
-              <span className="mb-1.5 block text-paper-100/70">Empleado vinculado</span>
+              <span className="mb-1.5 block text-foreground-muted">Empleado vinculado</span>
               <select className="input" value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })} required>
                 <option value="">Selecciona...</option>
                 {employees.map((e) => <option key={e.id} value={e.id}>{e.fullName} · {e.position}</option>)}
               </select>
-              <span className="mt-1 block text-xs text-paper-100/70">Solo verá su propia ficha y sus ausencias.</span>
+              <span className="mt-1 block text-xs text-foreground-muted">Solo verá su propia ficha y sus ausencias.</span>
             </label>
           )}
 
           {error && (
-            <div className="flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
+            <div className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger-strong">
               <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
               <span>{error}</span>
             </div>
           )}
 
           <div className="flex justify-end gap-3 pt-1">
-            <button type="button" onClick={onClose} className="rounded-md px-4 py-2 text-sm text-paper-100/70 transition hover:text-paper-100">Cancelar</button>
-            <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
+            <button type="button" onClick={onClose} className="rounded-md px-4 py-2 text-sm text-foreground-muted transition hover:text-foreground">Cancelar</button>
+            <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:opacity-60">
               {saving && <Spinner size={16} />}
               {isEditing ? 'Guardar' : 'Crear'}
             </button>
