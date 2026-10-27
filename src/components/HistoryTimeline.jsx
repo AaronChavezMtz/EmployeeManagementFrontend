@@ -1,6 +1,13 @@
 import { UserPlus, PencilLine, ArrowRightLeft, DollarSign, UserCheck, UserX } from 'lucide-react';
 
 const dateTimeFmt = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
+const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 2 });
+
+// La API guarda los salarios como texto ("17000.00"); se muestran como en la ficha ($17,000).
+function formatValue(changeType, value) {
+  if (changeType !== 'SalaryChanged' || value == null || Number.isNaN(Number(value))) return value;
+  return currency.format(Number(value));
+}
 
 const historyMeta = {
   Created: { icon: UserPlus, label: 'Contratación', color: 'text-sage-500 bg-sage-500/10' },
@@ -37,9 +44,9 @@ export default function HistoryTimeline({ history, subtitle }) {
                   </div>
                   {(h.oldValue || h.newValue) && (
                     <p className="mt-0.5 text-xs text-paper-100/60">
-                      {h.oldValue && <span className="line-through opacity-60">{h.oldValue}</span>}
+                      {h.oldValue && <span className="line-through opacity-60">{formatValue(h.changeType, h.oldValue)}</span>}
                       {h.oldValue && h.newValue && ' → '}
-                      {h.newValue}
+                      {formatValue(h.changeType, h.newValue)}
                     </p>
                   )}
                   <p className="mt-1 text-xs text-paper-100/40">por {h.changedBy}</p>
