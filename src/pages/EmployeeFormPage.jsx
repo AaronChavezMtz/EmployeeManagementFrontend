@@ -6,10 +6,11 @@ import { departmentsApi } from '../api/departments';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage, normalizeValidationErrors } from '../utils/errors';
 import Spinner from '../components/Spinner';
+import CredentialsDialog from '../components/CredentialsDialog';
 
 const emptyForm = {
   firstName: '', lastName: '', email: '', phone: '', position: '',
-  salary: '', hireDate: '', birthDate: '', departmentId: '',
+  salary: '', hireDate: '', birthDate: '', departmentId: '', grantPortalAccess: true,
 };
 
 export default function EmployeeFormPage() {
@@ -24,6 +25,7 @@ export default function EmployeeFormPage() {
   const [generalError, setGeneralError] = useState('');
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
+  const [createdAccess, setCreatedAccess] = useState(null); // { access, name }
 
   useEffect(() => {
     departmentsApi.getAll().then(setDepartments).catch((err) => showToast(getErrorMessage(err, 'No se pudieron cargar los departamentos.'), 'error'));
@@ -71,9 +73,16 @@ export default function EmployeeFormPage() {
     try {
       if (isEditing) {
         delete payload.hireDate; // no editable tras la creación
+        delete payload.grantPortalAccess;
         await employeesApi.update(id, payload);
       } else {
-        await employeesApi.create(payload);
+        const created = await employeesApi.create(payload);
+        if (created.portalAccess) {
+          // Se muestran las credenciales antes de salir: la API no las vuelve a devolver.
+          showToast('Empleado creado correctamente.', 'success');
+          setCreatedAccess({ access: created.portalAccess, name: created.fullName });
+          return;
+        }
       }
       showToast(isEditing ? 'Empleado actualizado correctamente.' : 'Empleado creado correctamente.', 'success');
       navigate('/empleados');
@@ -137,6 +146,17 @@ export default function EmployeeFormPage() {
           )}
         </div>
 
+        {!isEditing && (
+          <label className="mt-5 flex items-start gap-2.5 text-sm">
+            <input type="checkbox" className="mt-0.5 h-4 w-4 accent-gold-500" checked={form.grantPortalAccess}
+              onChange={(e) => handleChange('grantPortalAccess', e.target.checked)} />
+            <span>
+              <span className="block text-paper-100">Dar acceso al portal del empleado</span>
+              <span className="block text-xs text-paper-100/50">Se crea su usuario con el correo y una contraseña temporal que verás al guardar.</span>
+            </span>
+          </label>
+        )}
+
         {generalError && (
           <div className="mt-5 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
@@ -154,6 +174,12 @@ export default function EmployeeFormPage() {
           </button>
         </div>
       </form>
+
+      <CredentialsDialog
+        access={createdAccess?.access}
+        employeeName={createdAccess?.name}
+        onClose={() => navigate('/empleados')}
+      />
     </div>
   );
 }

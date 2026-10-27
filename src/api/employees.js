@@ -7,5 +7,6 @@ export const employeesApi = {
   update: (id, payload) => client.put(`/employees/${id}`, payload).then((r) => r.data),
   terminate: (id, payload) => client.post(`/employees/${id}/terminate`, payload).then((r) => r.data),
   rehire: (id, payload) => client.post(`/employees/${id}/rehire`, payload).then((r) => r.data),
+  createPortalAccess: (id) => client.post(`/employees/${id}/portal-access`).then((r) => r.data),
   getHistory: (id) => client.get(`/employees/${id}/history`).then((r) => r.data),
 };

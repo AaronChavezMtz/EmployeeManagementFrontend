@@ -78,6 +78,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 - **Empleados**: listado con búsqueda, filtros (departamento, estado, salario), orden y paginación; alta/edición con validación; baja con fecha y motivo y recontratación; perfil individual con línea de tiempo de cambios
 - **Departamentos**: CRUD en modal, con conteo de empleados activos
 - **Usuarios**: panel de cuentas y roles; las cuentas de Empleado se vinculan a su ficha (solo Admin)
+- **Acceso al portal automático**: al dar de alta un empleado (o desde su ficha) se crea su usuario con el correo y una contraseña temporal que se muestra una sola vez; el empleado debe cambiarla al entrar
 - **Dashboard**: plantilla activa, rotación de 12 meses, antigüedad promedio, altas y bajas por mes, bajas por motivo y nómina por departamento
 - **Exportación** de reportes a Excel y PDF
 - **Manejo de errores centralizado**: distingue errores de red (API no disponible) de errores de negocio, con notificaciones (toast) para confirmar cada acción
