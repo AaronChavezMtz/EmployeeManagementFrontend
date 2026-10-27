@@ -12,9 +12,9 @@ const emptyForm = { type: 'Vacation', startDate: '', endDate: '', reason: '' };
 function BalanceCard({ label, value, hint }) {
   return (
     <div className="rounded-lg border border-ink-700 bg-ink-900 p-5">
-      <p className="text-xs uppercase tracking-wide text-paper-100/40">{label}</p>
+      <p className="text-xs uppercase tracking-wide text-paper-100/70">{label}</p>
       <p className="mt-2 font-display text-2xl text-paper-100">{value}</p>
-      {hint && <p className="mt-1 text-xs text-paper-100/40">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-paper-100/70">{hint}</p>}
     </div>
   );
 }
@@ -63,7 +63,7 @@ export default function MyLeavePage() {
     }
   }
 
-  if (error) return <p className="text-sm text-clay-500">{error}</p>;
+  if (error) return <p className="text-sm text-clay-600">{error}</p>;
   const loaded = balance && requests;
 
   const today = todayInputValue();
@@ -77,7 +77,7 @@ export default function MyLeavePage() {
     <div className="max-w-4xl">
       <header className="mb-6">
         <h1 className="font-display text-3xl text-paper-100">Mis ausencias</h1>
-        <p className="mt-1 text-sm text-paper-100/50">
+        <p className="mt-1 text-sm text-paper-100/70">
           {balance ? `Periodo de vacaciones del ${formatDate(balance.periodStart)} al ${formatDate(balance.periodEnd)}` : 'Tu saldo de vacaciones y tus solicitudes'}
         </p>
       </header>
@@ -104,7 +104,7 @@ export default function MyLeavePage() {
         <BalanceCard label="Pendientes" value={balance.pendingDays} hint="en revisión por RH" />
       </div>
       {balance.entitledDays === 0 && (
-        <p className="mt-3 text-xs text-paper-100/50">Las vacaciones se generan al cumplir tu primer año de servicio. Mientras tanto puedes pedir permisos o registrar incapacidades.</p>
+        <p className="mt-3 text-xs text-paper-100/70">Las vacaciones se generan al cumplir tu primer año de servicio. Mientras tanto puedes pedir permisos o registrar incapacidades.</p>
       )}
 
       <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
@@ -136,14 +136,14 @@ export default function MyLeavePage() {
         </label>
 
         {formError && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{formError}</span>
           </div>
         )}
 
         <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-paper-100/60">Solo se cuentan días hábiles (lunes a viernes).</p>
+          <p className="text-xs text-paper-100/70">Solo se cuentan días hábiles (lunes a viernes).</p>
           <button type="submit" disabled={saving} className="flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
             {saving && <Spinner size={16} />}
             Enviar a RH
@@ -156,7 +156,7 @@ export default function MyLeavePage() {
       {/* Móvil: tarjetas; en una tabla de 640 px el estado y "Cancelar" quedaban fuera de la pantalla. */}
       <ul className="mt-3 space-y-3 sm:hidden">
         {requests.length === 0 ? (
-          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">Aún no tienes solicitudes.</li>
+          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/70">Aún no tienes solicitudes.</li>
         ) : (
           requests.map((r) => {
             const status = leaveStatuses[r.status] ?? leaveStatuses.Pending;
@@ -167,7 +167,7 @@ export default function MyLeavePage() {
                   <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${status.classes}`}>{status.label}</span>
                 </div>
                 <p className="mt-1 text-sm text-paper-100/70">{formatDate(r.startDate)} – {formatDate(r.endDate)} · {r.days} {r.days === 1 ? 'día' : 'días'}</p>
-                {r.reason && <p className="mt-1 text-sm text-paper-100/60">{r.reason}</p>}
+                {r.reason && <p className="mt-1 text-sm text-paper-100/70">{r.reason}</p>}
                 {r.reviewComment && <p className="mt-2 rounded-md bg-ink-800 px-3 py-2 text-sm text-paper-100/70">RH: “{r.reviewComment}”</p>}
                 {canCancel(r) && (
                   <button onClick={() => cancel(r.id)} className="mt-3 w-full rounded-md border border-ink-600 py-2.5 text-sm text-clay-600">Cancelar solicitud</button>
@@ -181,7 +181,7 @@ export default function MyLeavePage() {
       <div className="mt-3 hidden overflow-x-auto rounded-lg border border-ink-700 bg-ink-900 sm:block">
         <table className="w-full min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
+            <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/70">
               <th className="px-5 py-3 font-normal">Tipo</th>
               <th className="px-5 py-3 font-normal">Fechas</th>
               <th className="px-5 py-3 font-normal">Días</th>
@@ -191,7 +191,7 @@ export default function MyLeavePage() {
           </thead>
           <tbody>
             {requests.length === 0 ? (
-              <tr><td colSpan={5} className="py-10 text-center text-paper-100/40">Aún no tienes solicitudes.</td></tr>
+              <tr><td colSpan={5} className="py-10 text-center text-paper-100/70">Aún no tienes solicitudes.</td></tr>
             ) : (
               requests.map((r) => {
                 const status = leaveStatuses[r.status] ?? leaveStatuses.Pending;
@@ -199,17 +199,17 @@ export default function MyLeavePage() {
                   <tr key={r.id} className="border-b border-ink-700/60 last:border-0">
                     <td className="px-5 py-3 text-paper-100">
                       {leaveTypes[r.type] ?? r.type}
-                      {r.reason && <p className="text-xs text-paper-100/40">{r.reason}</p>}
+                      {r.reason && <p className="text-xs text-paper-100/70">{r.reason}</p>}
                     </td>
                     <td className="px-5 py-3 text-paper-100/70">{formatDate(r.startDate)} – {formatDate(r.endDate)}</td>
                     <td className="px-5 py-3 text-paper-100/70">{r.days}</td>
                     <td className="px-5 py-3">
                       <span className={`rounded-full px-2.5 py-1 text-xs ${status.classes}`}>{status.label}</span>
-                      {r.reviewComment && <p className="mt-1 text-xs text-paper-100/50">“{r.reviewComment}”</p>}
+                      {r.reviewComment && <p className="mt-1 text-xs text-paper-100/70">“{r.reviewComment}”</p>}
                     </td>
                     <td className="px-5 py-3 text-right">
                       {canCancel(r) && (
-                        <button onClick={() => cancel(r.id)} className="text-xs text-paper-100/50 transition hover:text-clay-500">Cancelar</button>
+                        <button onClick={() => cancel(r.id)} className="text-xs text-paper-100/70 transition hover:text-clay-600">Cancelar</button>
                       )}
                     </td>
                   </tr>

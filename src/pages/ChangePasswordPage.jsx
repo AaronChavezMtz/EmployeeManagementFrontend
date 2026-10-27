@@ -45,7 +45,7 @@ export default function ChangePasswordPage() {
           <KeyRound className="h-5 w-5 text-white" strokeWidth={1.75} />
         </span>
         <h1 className="mt-4 font-display text-2xl text-paper-100">Cambiar contraseña</h1>
-        <p className="mt-1 text-sm text-paper-100/50">
+        <p className="mt-1 text-sm text-paper-100/70">
           {forced
             ? 'Tu cuenta tiene una contraseña temporal. Elige una nueva para continuar.'
             : 'Necesitas tu contraseña actual para elegir una nueva.'}
@@ -67,7 +67,7 @@ export default function ChangePasswordPage() {
         </div>
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-500">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{error}</span>
           </div>
@@ -79,9 +79,9 @@ export default function ChangePasswordPage() {
         </button>
         <div className="mt-4 text-center text-sm">
           {forced ? (
-            <button type="button" onClick={logout} className="text-paper-100/50 transition hover:text-paper-100">Cerrar sesión</button>
+            <button type="button" onClick={logout} className="text-paper-100/70 transition hover:text-paper-100">Cerrar sesión</button>
           ) : (
-            <Link to={homePathFor(user?.role)} className="text-paper-100/50 transition hover:text-paper-100">Volver</Link>
+            <Link to={homePathFor(user?.role)} className="text-paper-100/70 transition hover:text-paper-100">Volver</Link>
           )}
         </div>
       </form>

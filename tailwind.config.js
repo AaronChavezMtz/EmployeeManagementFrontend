@@ -32,6 +32,7 @@ export default {
         sage: {
           500: '#1F9D63',
           600: '#187E4F',
+          700: '#146B43', // texto sobre el tinte verde de los chips (5.5:1)
         },
       },
       fontFamily: {

@@ -4,10 +4,15 @@
 
 @layer base {
   html {
-    @apply scroll-smooth;
+    @apply motion-safe:scroll-smooth;
   }
   body {
     @apply bg-ink-950 text-paper-100 font-sans antialiased;
+  }
+  /* Placeholders legibles: el gris por defecto queda en ~2.5:1. */
+  ::placeholder {
+    color: rgb(28 36 51 / 0.6);
+    opacity: 1;
   }
   ::selection {
     @apply bg-gold-500/30 text-paper-100;
