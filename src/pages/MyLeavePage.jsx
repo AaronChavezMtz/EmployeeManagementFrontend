@@ -66,6 +66,7 @@ export default function MyLeavePage() {
   if (!balance || !requests) return <div className="flex justify-center pt-20"><Spinner size={28} /></div>;
 
   const today = todayInputValue();
+  const canCancel = (r) => r.status === 'Pending' || (r.status === 'Approved' && r.startDate.slice(0, 10) > today);
   // Una incapacidad se puede registrar hasta 30 días después; el resto, desde hoy.
   const minStart = form.type === 'Sick'
     ? new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10)
@@ -125,16 +126,43 @@ export default function MyLeavePage() {
           </div>
         )}
 
-        <div className="mt-5 flex items-center justify-between gap-3">
-          <p className="text-xs text-paper-100/40">Solo se cuentan días hábiles (lunes a viernes).</p>
-          <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
+        <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-paper-100/60">Solo se cuentan días hábiles (lunes a viernes).</p>
+          <button type="submit" disabled={saving} className="flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
             {saving && <Spinner size={16} />}
             Enviar a RH
           </button>
         </div>
       </form>
 
-      <div className="mt-6 overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
+      <h2 className="mt-8 font-display text-lg text-paper-100">Mis solicitudes</h2>
+
+      {/* Móvil: tarjetas; en una tabla de 640 px el estado y "Cancelar" quedaban fuera de la pantalla. */}
+      <ul className="mt-3 space-y-3 sm:hidden">
+        {requests.length === 0 ? (
+          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">Aún no tienes solicitudes.</li>
+        ) : (
+          requests.map((r) => {
+            const status = leaveStatuses[r.status] ?? leaveStatuses.Pending;
+            return (
+              <li key={r.id} className="rounded-lg border border-ink-700 bg-ink-900 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="font-medium text-paper-100">{leaveTypes[r.type] ?? r.type}</p>
+                  <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${status.classes}`}>{status.label}</span>
+                </div>
+                <p className="mt-1 text-sm text-paper-100/70">{formatDate(r.startDate)} – {formatDate(r.endDate)} · {r.days} {r.days === 1 ? 'día' : 'días'}</p>
+                {r.reason && <p className="mt-1 text-sm text-paper-100/60">{r.reason}</p>}
+                {r.reviewComment && <p className="mt-2 rounded-md bg-ink-800 px-3 py-2 text-sm text-paper-100/70">RH: “{r.reviewComment}”</p>}
+                {canCancel(r) && (
+                  <button onClick={() => cancel(r.id)} className="mt-3 w-full rounded-md border border-ink-600 py-2.5 text-sm text-clay-600">Cancelar solicitud</button>
+                )}
+              </li>
+            );
+          })
+        )}
+      </ul>
+
+      <div className="mt-3 hidden overflow-x-auto rounded-lg border border-ink-700 bg-ink-900 sm:block">
         <table className="w-full min-w-[640px] text-sm">
           <thead>
             <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
@@ -151,7 +179,6 @@ export default function MyLeavePage() {
             ) : (
               requests.map((r) => {
                 const status = leaveStatuses[r.status] ?? leaveStatuses.Pending;
-                const canCancel = r.status === 'Pending' || (r.status === 'Approved' && r.startDate.slice(0, 10) > today);
                 return (
                   <tr key={r.id} className="border-b border-ink-700/60 last:border-0">
                     <td className="px-5 py-3 text-paper-100">
@@ -165,7 +192,7 @@ export default function MyLeavePage() {
                       {r.reviewComment && <p className="mt-1 text-xs text-paper-100/50">“{r.reviewComment}”</p>}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      {canCancel && (
+                      {canCancel(r) && (
                         <button onClick={() => cancel(r.id)} className="text-xs text-paper-100/50 transition hover:text-clay-500">Cancelar</button>
                       )}
                     </td>

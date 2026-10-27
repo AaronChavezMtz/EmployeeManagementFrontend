@@ -135,8 +135,8 @@ export default function EmployeesPage() {
         </div>
       </header>
 
-      <div className="mb-5 flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[220px]">
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
+        <div className="relative sm:min-w-[220px] sm:flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-paper-100/40" strokeWidth={1.75} />
           <input
             type="text"
@@ -150,7 +150,7 @@ export default function EmployeesPage() {
         <select
           value={filters.departmentId}
           onChange={(e) => updateFilter('departmentId', e.target.value)}
-          className="rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500"
+          className="w-full rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500 sm:w-auto"
         >
           <option value="">Todos los departamentos</option>
           {departments.map((d) => (
@@ -161,7 +161,7 @@ export default function EmployeesPage() {
         <select
           value={filters.isActive}
           onChange={(e) => updateFilter('isActive', e.target.value)}
-          className="rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500"
+          className="w-full rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500 sm:w-auto"
         >
           <option value="">Activos e inactivos</option>
           <option value="true">Solo activos</option>
@@ -171,7 +171,7 @@ export default function EmployeesPage() {
         <select
           value={filters.sortBy}
           onChange={(e) => updateFilter('sortBy', e.target.value)}
-          className="rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500"
+          className="w-full rounded-md border border-ink-600 bg-ink-900 px-3 py-2.5 text-sm text-paper-100 outline-none transition focus:border-gold-500 sm:w-auto"
         >
           <option value="lastname">Ordenar: Apellido</option>
           <option value="salary">Ordenar: Salario</option>
@@ -182,7 +182,47 @@ export default function EmployeesPage() {
 
       {error && <p className="mb-4 text-sm text-clay-500">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-ink-700 bg-ink-900">
+      {/* Móvil: una tarjeta por empleado, con todas las acciones a la vista. */}
+      <ul className="space-y-3 sm:hidden">
+        {loading ? (
+          <li className="flex justify-center py-12"><Spinner size={24} /></li>
+        ) : data.items.length === 0 ? (
+          <li className="rounded-lg border border-ink-700 bg-ink-900 py-10 text-center text-sm text-paper-100/50">Sin resultados para este filtro.</li>
+        ) : (
+          data.items.map((emp) => (
+            <li key={emp.id} className="rounded-lg border border-ink-700 bg-ink-900 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <Link to={`/empleados/${emp.id}`} className="font-medium text-paper-100">{emp.fullName}</Link>
+                  <p className="truncate text-sm text-paper-100/70">{emp.position} · {emp.departmentName}</p>
+                </div>
+                <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-sage-500/15 text-sage-600' : 'bg-ink-700 text-paper-100/60'}`}>
+                  {emp.isActive ? 'Activo' : 'Inactivo'}
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-paper-100">{currency.format(emp.salary)} <span className="text-paper-100/60">mensual</span></p>
+              {isAdmin && (
+                <div className="mt-3 flex gap-2 border-t border-ink-700 pt-3">
+                  <Link to={`/empleados/${emp.id}/editar`} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-paper-100/80">
+                    <Pencil className="h-4 w-4" strokeWidth={1.75} /> Editar
+                  </Link>
+                  {emp.isActive ? (
+                    <button onClick={() => setToTerminate(emp)} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-paper-100/80">
+                      <UserMinus className="h-4 w-4 text-clay-500" strokeWidth={1.75} /> Dar de baja
+                    </button>
+                  ) : (
+                    <button onClick={() => setToRehire(emp)} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-600 py-2.5 text-sm text-sage-600">
+                      <UserPlus className="h-4 w-4" strokeWidth={1.75} /> Recontratar
+                    </button>
+                  )}
+                </div>
+              )}
+            </li>
+          ))
+        )}
+      </ul>
+
+      <div className="hidden overflow-x-auto rounded-lg border border-ink-700 bg-ink-900 sm:block">
         <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b border-ink-700 text-left text-xs uppercase tracking-wide text-paper-100/40">
