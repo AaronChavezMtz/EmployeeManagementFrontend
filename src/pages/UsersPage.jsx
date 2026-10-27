@@ -112,8 +112,9 @@ export default function UsersPage() {
             ) : (
               users.map((u) => {
                 const isSelf = u.username === currentUser?.username;
-                const locked = isSelf || u.isProtected;
-                const lockedTitle = u.isProtected ? 'Cuenta de demostración protegida' : 'No puedes cambiar tu propia cuenta';
+                // La API decide quién puede editar a quién (el dueño puede tocar cuentas protegidas).
+                const locked = !u.canEdit;
+                const lockedTitle = isSelf ? 'No puedes cambiar tu propia cuenta' : 'Cuenta de demostración protegida';
                 return (
                   <tr key={u.id} className="border-b border-ink-700/60 last:border-0">
                     <td className="px-5 py-3 text-paper-100">
