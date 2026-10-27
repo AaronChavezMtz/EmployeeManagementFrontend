@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X, UserRound, CalendarDays } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X, UserRound, CalendarDays, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const APP_NAME = 'Gestor de Empleados';
@@ -113,9 +113,16 @@ export default function Layout() {
               <p className="text-[11px] text-paper-100/40">{isAdmin ? 'Administrador' : 'Empleado'}</p>
             </div>
           </div>
+          <NavLink
+            to="/cambiar-contrasena"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs text-paper-100/50 transition hover:text-gold-500"
+          >
+            <KeyRound className="h-3.5 w-3.5" strokeWidth={1.75} />
+            Cambiar contraseña
+          </NavLink>
           <button
             onClick={logout}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-ink-600 px-3 py-2 text-xs font-medium text-paper-100/60 transition hover:border-clay-500 hover:bg-clay-500/5 hover:text-clay-500"
+            className="mt-1 flex w-full items-center justify-center gap-2 rounded-md border border-ink-600 px-3 py-2 text-xs font-medium text-paper-100/60 transition hover:border-clay-500 hover:bg-clay-500/5 hover:text-clay-500"
           >
             <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
             Cerrar sesión

@@ -18,11 +18,22 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (username, password) => {
     const { data } = await client.post('/auth/login', { username, password });
-    const sessionUser = { username: data.username, role: data.role, expiresAtUtc: data.expiresAtUtc };
+    const sessionUser = {
+      username: data.username, role: data.role, expiresAtUtc: data.expiresAtUtc,
+      mustChangePassword: data.mustChangePassword,
+    };
     localStorage.setItem('emp_token', data.token);
     localStorage.setItem('emp_user', JSON.stringify(sessionUser));
     setUser(sessionUser);
     return sessionUser;
+  }, []);
+
+  const markPasswordChanged = useCallback(() => {
+    setUser((current) => {
+      const updated = { ...current, mustChangePassword: false };
+      localStorage.setItem('emp_user', JSON.stringify(updated));
+      return updated;
+    });
   }, []);
 
   const logout = useCallback(() => {
@@ -35,7 +46,7 @@ export function AuthProvider({ children }) {
   const isEmployee = user?.role === 'Employee';
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAdmin, isEmployee, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, markPasswordChanged, isAdmin, isEmployee, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

@@ -27,7 +27,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const sessionUser = await login(username, password);
-      navigate(location.state?.from?.pathname || homePathFor(sessionUser.role), { replace: true });
+      const target = sessionUser.mustChangePassword ? '/cambiar-contrasena' : location.state?.from?.pathname || homePathFor(sessionUser.role);
+      navigate(target, { replace: true });
     } catch (err) {
       setError(getErrorMessage(err, 'Usuario o contraseña incorrectos'));
     } finally {
