@@ -104,15 +104,15 @@ export default function EmployeeFormPage() {
 
   return (
     <div className="max-w-2xl">
-      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-paper-100/70 transition hover:text-paper-100">
+      <Link to="/empleados" className="mb-6 inline-flex items-center gap-1.5 text-sm text-foreground-muted transition hover:text-foreground">
         <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
         Volver a empleados
       </Link>
 
-      <h1 className="font-display text-3xl text-paper-100">{isEditing ? 'Editar empleado' : 'Nuevo empleado'}</h1>
+      <h1 className="font-display text-3xl text-foreground">{isEditing ? 'Editar empleado' : 'Nuevo empleado'}</h1>
 
 {!loaded ? (
-        <Loading className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
+        <Loading className="mt-6 rounded-lg border border-subtle bg-surface p-6">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {Array.from({ length: 8 }, (_, i) => (
               <div key={i}>
@@ -124,65 +124,74 @@ export default function EmployeeFormPage() {
         </Loading>
       ) : (
       <>
-      <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Field label="Nombre" error={errors.firstName}>
+      <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+        <p className="mb-5 text-xs text-foreground-muted"><span aria-hidden="true">*</span> Campo obligatorio</p>
+
+        <Section title="Datos personales">
+          <Field label="Nombre" required error={errors.firstName}>
             <input className="input" value={form.firstName} onChange={(e) => handleChange('firstName', e.target.value)} required />
           </Field>
-          <Field label="Apellido" error={errors.lastName}>
+          <Field label="Apellido" required error={errors.lastName}>
             <input className="input" value={form.lastName} onChange={(e) => handleChange('lastName', e.target.value)} required />
           </Field>
-          <Field label="Correo" error={errors.email}>
+          <Field label="Correo" required error={errors.email}>
             <input type="email" className="input" value={form.email} onChange={(e) => handleChange('email', e.target.value)} required />
           </Field>
-          <Field label="Teléfono" error={errors.phone}>
-            <input className="input" value={form.phone} onChange={(e) => handleChange('phone', e.target.value)} />
+          <Field label="Teléfono" hint="10 dígitos" error={errors.phone}>
+            <input type="tel" inputMode="tel" className="input" value={form.phone} onChange={(e) => handleChange('phone', e.target.value)} />
           </Field>
-          <Field label="Puesto" error={errors.position}>
-            <input className="input" value={form.position} onChange={(e) => handleChange('position', e.target.value)} required />
+          <Field label="Fecha de nacimiento" required hint="Debe tener al menos 18 años" error={errors.birthDate}>
+            <input type="date" className="input" value={form.birthDate} onChange={(e) => handleChange('birthDate', e.target.value)} required />
           </Field>
-          <Field label="Salario mensual" error={errors.salary}>
-            <input type="number" min="1" step="0.01" className="input" value={form.salary} onChange={(e) => handleChange('salary', e.target.value)} required />
-          </Field>
-          <Field label="Departamento" error={errors.departmentId}>
+        </Section>
+
+        <Section title="Puesto y contrato">
+          <Field label="Departamento" required error={errors.departmentId}>
             <select className="input" value={form.departmentId} onChange={(e) => handleChange('departmentId', e.target.value)} required>
               <option value="">Selecciona...</option>
               {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
             </select>
           </Field>
-          <Field label="Fecha de nacimiento" error={errors.birthDate}>
-            <input type="date" className="input" value={form.birthDate} onChange={(e) => handleChange('birthDate', e.target.value)} required />
+          <Field label="Puesto" required error={errors.position}>
+            <input className="input" value={form.position} onChange={(e) => handleChange('position', e.target.value)} required />
+          </Field>
+          <Field label="Salario mensual" required error={errors.salary}>
+            <div className="relative">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-foreground-muted" aria-hidden="true">$</span>
+              <input type="number" min="1" step="0.01" inputMode="decimal" className="input pl-7 pr-14 tabular-nums" value={form.salary} onChange={(e) => handleChange('salary', e.target.value)} required />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-muted" aria-hidden="true">MXN</span>
+            </div>
           </Field>
           {!isEditing && (
-            <Field label="Fecha de contratación" error={errors.hireDate}>
+            <Field label="Fecha de contratación" required error={errors.hireDate}>
               <input type="date" className="input" value={form.hireDate} onChange={(e) => handleChange('hireDate', e.target.value)} required />
             </Field>
           )}
-        </div>
+        </Section>
 
         {!isEditing && (
           <label className="mt-5 flex items-start gap-2.5 text-sm">
-            <input type="checkbox" className="mt-0.5 h-4 w-4 accent-gold-500" checked={form.grantPortalAccess}
+            <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" checked={form.grantPortalAccess}
               onChange={(e) => handleChange('grantPortalAccess', e.target.checked)} />
             <span>
-              <span className="block text-paper-100">Dar acceso al portal del empleado</span>
-              <span className="block text-xs text-paper-100/70">Se crea su usuario con el correo y una contraseña temporal que verás al guardar.</span>
+              <span className="block text-foreground">Dar acceso al portal del empleado</span>
+              <span className="block text-xs text-foreground-muted">Se crea su usuario con el correo y una contraseña temporal que verás al guardar.</span>
             </span>
           </label>
         )}
 
         {generalError && (
-          <div className="mt-5 flex items-start gap-2 rounded-md border border-clay-500/30 bg-clay-500/10 px-3 py-2.5 text-sm text-clay-600">
+          <div className="mt-5 flex items-start gap-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger-strong">
             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
             <span>{generalError}</span>
           </div>
         )}
 
         <div className="mt-6 flex justify-end gap-3">
-          <Link to="/empleados" className="rounded-md px-4 py-2.5 text-sm text-paper-100/70 transition hover:text-paper-100">
+          <Link to="/empleados" className="rounded-md px-4 py-2.5 text-sm text-foreground-muted transition hover:text-foreground">
             Cancelar
           </Link>
-          <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gold-400 disabled:opacity-60">
+          <button type="submit" disabled={saving} className="flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-hover disabled:opacity-60">
             {saving && <Spinner size={16} />}
             {isEditing ? 'Guardar cambios' : 'Crear empleado'}
           </button>
@@ -200,12 +209,26 @@ export default function EmployeeFormPage() {
   );
 }
 
-function Field({ label, error, children }) {
+function Section({ title, children }) {
+  return (
+    <fieldset className="mb-6 last-of-type:mb-0">
+      <legend className="mb-4 text-xs font-medium uppercase tracking-wide text-foreground-muted">{title}</legend>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">{children}</div>
+    </fieldset>
+  );
+}
+
+function Field({ label, required = false, hint, error, children }) {
   return (
     <label className="block text-sm">
-      <span className="mb-1.5 block text-paper-100/70">{label}</span>
+      <span className="mb-1.5 block text-foreground">
+        {label}
+        {required && <span className="ml-0.5 text-danger-strong" aria-hidden="true">*</span>}
+      </span>
       {children}
-      {error && <span className="mt-1 block text-xs text-clay-600">{error}</span>}
+      {error
+        ? <span className="mt-1 block text-xs text-danger-strong">{error}</span>
+        : hint && <span className="mt-1 block text-xs text-foreground-muted">{hint}</span>}
     </label>
   );
 }

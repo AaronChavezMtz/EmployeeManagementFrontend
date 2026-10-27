@@ -5,13 +5,13 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
 
   return (
     <Modal onClose={onCancel}>
-      <div className="w-full max-w-sm rounded-lg border border-ink-700 bg-ink-900 p-6 shadow-xl">
-        <h3 className="font-display text-lg text-paper-100">{title}</h3>
-        <p className="mt-2 text-sm text-paper-100/70">{message}</p>
+      <div className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6 shadow-xl">
+        <h3 className="font-display text-lg text-foreground">{title}</h3>
+        <p className="mt-2 text-sm text-foreground-muted">{message}</p>
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="rounded-md px-4 py-2 text-sm text-paper-100/70 transition hover:text-paper-100"
+            className="rounded-md px-4 py-2 text-sm text-foreground-muted transition hover:text-foreground"
           >
             Cancelar
           </button>
@@ -19,8 +19,8 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
             onClick={onConfirm}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
               danger
-                ? 'bg-clay-600 text-white hover:opacity-90'
-                : 'bg-gold-500 text-white hover:bg-gold-400'
+                ? 'bg-danger-strong text-white hover:opacity-90'
+                : 'bg-primary text-white hover:bg-primary-hover'
             }`}
           >
             {confirmLabel}

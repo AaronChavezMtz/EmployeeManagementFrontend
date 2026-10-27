@@ -4,9 +4,9 @@ import { CheckCircle2, XCircle, Info, X } from 'lucide-react';
 const ToastContext = createContext(null);
 
 const styles = {
-  success: { icon: CheckCircle2, classes: 'border-sage-500/30 bg-sage-500/10 text-sage-600' },
-  error: { icon: XCircle, classes: 'border-clay-500/30 bg-clay-500/10 text-clay-600' },
-  info: { icon: Info, classes: 'border-gold-500/30 bg-gold-500/10 text-gold-600' },
+  success: { icon: CheckCircle2, classes: 'border-success/30 bg-success/10 text-success-strong' },
+  error: { icon: XCircle, classes: 'border-danger/30 bg-danger/10 text-danger-strong' },
+  info: { icon: Info, classes: 'border-primary/30 bg-primary/10 text-primary-strong' },
 };
 
 export function ToastProvider({ children }) {
@@ -35,8 +35,8 @@ export function ToastProvider({ children }) {
               className={`flex items-start gap-2.5 rounded-lg border bg-white px-4 py-3 text-sm shadow-lg shadow-black/10 ${classes}`}
             >
               <Icon className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} />
-              <p className="flex-1 text-paper-100">{message}</p>
-              <button onClick={() => dismiss(id)} aria-label="Cerrar aviso" className="text-paper-100/70 transition hover:text-paper-100/70">
+              <p className="flex-1 text-foreground">{message}</p>
+              <button onClick={() => dismiss(id)} aria-label="Cerrar aviso" className="text-foreground-muted transition hover:text-foreground-muted">
                 <X className="h-3.5 w-3.5" strokeWidth={1.75} />
               </button>
             </div>

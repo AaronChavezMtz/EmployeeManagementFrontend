@@ -10,24 +10,24 @@ function formatValue(changeType, value) {
 }
 
 const historyMeta = {
-  Created: { icon: UserPlus, label: 'Contratación', color: 'text-sage-600 bg-sage-500/10' },
-  Updated: { icon: PencilLine, label: 'Datos actualizados', color: 'text-paper-100/70 bg-ink-700' },
-  DepartmentChanged: { icon: ArrowRightLeft, label: 'Cambio de departamento', color: 'text-gold-600 bg-gold-500/10' },
-  SalaryChanged: { icon: DollarSign, label: 'Cambio de salario', color: 'text-gold-600 bg-gold-500/10' },
-  Activated: { icon: UserCheck, label: 'Reactivado', color: 'text-sage-600 bg-sage-500/10' },
-  Deactivated: { icon: UserX, label: 'Dado de baja', color: 'text-clay-600 bg-clay-500/10' },
+  Created: { icon: UserPlus, label: 'Contratación', color: 'text-success-strong bg-success/10' },
+  Updated: { icon: PencilLine, label: 'Datos actualizados', color: 'text-foreground-muted bg-subtle' },
+  DepartmentChanged: { icon: ArrowRightLeft, label: 'Cambio de departamento', color: 'text-primary-strong bg-primary/10' },
+  SalaryChanged: { icon: DollarSign, label: 'Cambio de salario', color: 'text-primary-strong bg-primary/10' },
+  Activated: { icon: UserCheck, label: 'Reactivado', color: 'text-success-strong bg-success/10' },
+  Deactivated: { icon: UserX, label: 'Dado de baja', color: 'text-danger-strong bg-danger/10' },
 };
 
 // Bitácora de cambios de un empleado; la usan el detalle (RH) y el portal del empleado.
 export default function HistoryTimeline({ history, subtitle }) {
   return (
-    <div className="mt-6 rounded-lg border border-ink-700 bg-ink-900 p-6">
-      <h2 className="font-display text-lg text-paper-100">Historial</h2>
-      <p className="mt-0.5 text-xs text-paper-100/70">{subtitle}</p>
+    <div className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+      <h2 className="font-display text-lg text-foreground">Historial</h2>
+      <p className="mt-0.5 text-xs text-foreground-muted">{subtitle}</p>
 
       <div className="mt-5 space-y-4">
         {!history || history.length === 0 ? (
-          <p className="text-sm text-paper-100/70">Sin movimientos registrados.</p>
+          <p className="text-sm text-foreground-muted">Sin movimientos registrados.</p>
         ) : (
           history.map((h) => {
             const meta = historyMeta[h.changeType] ?? historyMeta.Updated;
@@ -37,19 +37,19 @@ export default function HistoryTimeline({ history, subtitle }) {
                 <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${meta.color}`}>
                   <Icon className="h-4 w-4" strokeWidth={1.75} />
                 </div>
-                <div className="flex-1 border-b border-ink-700/60 pb-4 last:border-0 last:pb-0">
+                <div className="flex-1 border-b border-subtle/60 pb-4 last:border-0 last:pb-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm text-paper-100">{meta.label}</p>
-                    <p className="text-xs text-paper-100/70">{dateTimeFmt.format(new Date(h.changedAtUtc))}</p>
+                    <p className="text-sm text-foreground">{meta.label}</p>
+                    <p className="text-xs text-foreground-muted">{dateTimeFmt.format(new Date(h.changedAtUtc))}</p>
                   </div>
                   {(h.oldValue || h.newValue) && (
-                    <p className="mt-0.5 text-xs text-paper-100/70">
+                    <p className="mt-0.5 text-xs text-foreground-muted">
                       {h.oldValue && <span className="line-through">{formatValue(h.changeType, h.oldValue)}</span>}
                       {h.oldValue && h.newValue && ' → '}
                       {formatValue(h.changeType, h.newValue)}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-paper-100/70">por {h.changedBy}</p>
+                  <p className="mt-1 text-xs text-foreground-muted">por {h.changedBy}</p>
                 </div>
               </div>
             );

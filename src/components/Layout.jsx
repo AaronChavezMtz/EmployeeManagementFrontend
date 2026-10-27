@@ -44,21 +44,21 @@ export default function Layout() {
   }, [location.pathname, navItems]);
 
   return (
-    <div className="flex min-h-screen bg-ink-950">
-      <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-sm focus:text-paper-100 focus:shadow-lg">
+    <div className="flex min-h-screen bg-background">
+      <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:text-foreground focus:shadow-lg">
         Saltar al contenido
       </a>
       {/* Barra superior, solo en pantallas pequeñas */}
-      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-ink-700 bg-ink-900 px-4 py-3 lg:hidden">
+      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-subtle bg-surface px-4 py-3 lg:hidden">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gold-500">
+          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-primary">
             <BookUser className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
           </span>
-          <p className="font-display text-sm text-paper-100">{APP_NAME}</p>
+          <p className="font-display text-sm text-foreground">{APP_NAME}</p>
         </div>
         <button
           onClick={() => setMobileOpen(true)}
-          className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-800"
+          className="rounded-md p-2.5 text-foreground-muted transition hover:bg-muted"
           aria-label="Abrir menú"
           aria-expanded={mobileOpen}
           aria-controls="menu-principal"
@@ -77,23 +77,23 @@ export default function Layout() {
 
       <aside
         id="menu-principal"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-shrink-0 flex-col border-r border-ink-700 bg-ink-900 transition-transform duration-200 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-shrink-0 flex-col border-r border-subtle bg-surface transition-transform duration-200 border-r border-subtle lg:static lg:translate-x-0 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex items-center justify-between px-6 py-6">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gold-500">
+            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-primary">
               <BookUser className="h-4 w-4 text-white" strokeWidth={1.75} />
             </span>
             <div>
-              <p className="font-display text-base leading-tight text-paper-100">{APP_NAME}</p>
-              <p className="text-[11px] text-paper-100/70">Registro de empleados</p>
+              <p className="font-display text-base leading-tight text-foreground">{APP_NAME}</p>
+              <p className="text-[11px] text-foreground-muted">Registro de empleados</p>
             </div>
           </div>
           <button
             onClick={() => setMobileOpen(false)}
-            className="rounded-md p-2.5 text-paper-100/70 transition hover:bg-ink-800 lg:hidden"
+            className="rounded-md p-2.5 text-foreground-muted transition hover:bg-muted lg:hidden"
             aria-label="Cerrar menú"
           >
             <X className="h-4 w-4" strokeWidth={1.75} />
@@ -111,8 +111,8 @@ export default function Layout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition ${
                   isActive
-                    ? 'bg-gold-500/10 text-gold-600'
-                    : 'text-paper-100/70 hover:bg-ink-800 hover:text-paper-100'
+                    ? 'bg-primary/10 text-primary-strong'
+                    : 'text-foreground-muted hover:bg-muted hover:text-foreground'
                 }`
               }
             >
@@ -125,25 +125,25 @@ export default function Layout() {
         <div className="ledger-divider mx-6" />
 
         <div className="px-4 py-4">
-          <div className="flex items-center gap-2.5 rounded-md bg-ink-800 px-3 py-2.5">
-            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500 text-xs font-medium text-white">
+          <div className="flex items-center gap-2.5 rounded-md bg-muted px-3 py-2.5">
+            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-white">
               {user?.username?.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm text-paper-100">{user?.username}</p>
-              <p className="text-[11px] text-paper-100/70">{isAdmin ? 'Administrador' : 'Empleado'}</p>
+              <p className="truncate text-sm text-foreground">{user?.username}</p>
+              <p className="text-[11px] text-foreground-muted">{isAdmin ? 'Administrador' : 'Empleado'}</p>
             </div>
           </div>
           <NavLink
             to="/cambiar-contrasena"
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs text-paper-100/70 transition hover:text-gold-500"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs text-foreground-muted transition hover:text-primary"
           >
             <KeyRound className="h-3.5 w-3.5" strokeWidth={1.75} />
             Cambiar contraseña
           </NavLink>
           <button
             onClick={logout}
-            className="mt-1 flex w-full items-center justify-center gap-2 rounded-md border border-ink-600 px-3 py-2 text-xs font-medium text-paper-100/70 transition hover:border-clay-500 hover:bg-clay-500/5 hover:text-clay-600"
+            className="mt-1 flex w-full items-center justify-center gap-2 rounded-md border border-outline px-3 py-2 text-xs font-medium text-foreground-muted transition hover:border-danger hover:bg-danger/5 hover:text-danger-strong"
           >
             <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
             Cerrar sesión
@@ -152,7 +152,7 @@ export default function Layout() {
       </aside>
 
       <main id="contenido" tabIndex={-1} className="flex-1 overflow-y-auto p-3 pt-16 outline-none sm:p-6 lg:pt-6">
-        <div className="mx-auto max-w-6xl rounded-2xl bg-ink-900 p-4 shadow-sm shadow-black/5 sm:p-8">
+        <div className="mx-auto max-w-6xl px-1 py-2 sm:px-2">
           <Outlet />
         </div>
       </main>
