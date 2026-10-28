@@ -31,7 +31,7 @@ export const leaveTypes = {
 };
 
 export const leaveStatuses = {
-  Pending: { label: 'Pendiente', classes: 'bg-primary/10 text-primary-strong' },
+  Pending: { label: 'Pendiente', classes: 'bg-warning/15 text-warning-ink' },
   Approved: { label: 'Aprobada', classes: 'bg-success/15 text-success-ink' },
   Rejected: { label: 'Rechazada', classes: 'bg-danger/10 text-danger-strong' },
   Cancelled: { label: 'Cancelada', classes: 'bg-subtle text-foreground-muted' },

@@ -38,7 +38,7 @@ export function SkeletonRows({ rows = 6, cols }) {
 // Tarjetas para las listas de móvil.
 export function SkeletonCards({ count = 4, withActions = false }) {
   return Array.from({ length: count }, (_, i) => (
-    <li key={i} className="rounded-lg border border-subtle bg-surface p-4" aria-hidden="true">
+    <li key={i} className="rounded-lg border border-outline bg-surface p-4" aria-hidden="true">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <Skeleton className="h-4 w-40" />
@@ -60,7 +60,7 @@ export function SkeletonCards({ count = 4, withActions = false }) {
 // Tarjeta de KPI / métrica.
 export function SkeletonStat() {
   return (
-    <div className="rounded-lg border border-subtle bg-surface p-4 sm:p-5" aria-hidden="true">
+    <div className="bg-surface p-4 sm:p-5" aria-hidden="true">
       <Skeleton className="h-3 w-24" />
       <Skeleton className="mt-3 h-7 w-20" />
       <Skeleton className="mt-2 h-3 w-28" />
@@ -71,7 +71,7 @@ export function SkeletonStat() {
 // Ficha de empleado (detalle y "Mi perfil"): nombre, puesto y la rejilla de datos.
 export function SkeletonProfile({ fields = 6 }) {
   return (
-    <div className="rounded-lg border border-subtle bg-surface p-6" aria-hidden="true">
+    <div className="rounded-lg border border-outline bg-surface p-6" aria-hidden="true">
       <Skeleton className="h-7 w-56" />
       <Skeleton className="mt-2 h-4 w-44" />
       <div className="ledger-divider my-5" />
@@ -93,7 +93,7 @@ export function SkeletonProfile({ fields = 6 }) {
 // Bloque del historial.
 export function SkeletonTimeline({ items = 3 }) {
   return (
-    <div className="mt-6 rounded-lg border border-subtle bg-surface p-6" aria-hidden="true">
+    <div className="mt-6 rounded-lg border border-outline bg-surface p-6" aria-hidden="true">
       <Skeleton className="h-5 w-24" />
       <Skeleton className="mt-2 h-3 w-48" />
       <div className="mt-5 space-y-5">

@@ -109,10 +109,10 @@ export default function EmployeeFormPage() {
         Volver a empleados
       </Link>
 
-      <h1 className="font-display text-3xl text-foreground">{isEditing ? 'Editar empleado' : 'Nuevo empleado'}</h1>
+      <h1 className="membrete font-display text-3xl text-foreground">{isEditing ? 'Editar empleado' : 'Nuevo empleado'}</h1>
 
 {!loaded ? (
-        <Loading className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+        <Loading className="mt-6 rounded-lg border border-outline bg-surface p-6">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {Array.from({ length: 8 }, (_, i) => (
               <div key={i}>
@@ -124,7 +124,7 @@ export default function EmployeeFormPage() {
         </Loading>
       ) : (
       <>
-      <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+      <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-outline bg-surface p-6">
         <p className="mb-5 text-xs text-foreground-muted"><span aria-hidden="true">*</span> Campo obligatorio</p>
 
         <Section title="Datos personales">
@@ -212,7 +212,7 @@ export default function EmployeeFormPage() {
 function Section({ title, children }) {
   return (
     <fieldset className="mb-6 last-of-type:mb-0">
-      <legend className="mb-4 text-xs font-medium uppercase tracking-wide text-foreground-muted">{title}</legend>
+      <legend className="mb-4 text-xs font-medium font-medium text-foreground-muted">{title}</legend>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">{children}</div>
     </fieldset>
   );

@@ -1,3 +1,6 @@
+import { useId } from 'react';
+import { colors } from '../theme';
+
 // Grabado de seguridad (guilloché), el de contratos, títulos y recibos de nómina.
 // Se genera con hipotrocoides: la misma matemática de los tornos de grabado. Todo es decorativo.
 
@@ -37,24 +40,28 @@ const WAVES = Array.from({ length: 26 }, (_, i) => {
 });
 
 // Sello circular con monograma y leyenda grabada en el anillo.
-export function Seal({ className = '' }) {
+// compact: versión reducida para tamaños pequeños (lomo, barra móvil): sin leyenda, que ahí sería ilegible.
+export function Seal({ className = '', compact = false }) {
+  const ringId = useId();
   return (
     <svg viewBox="0 0 240 240" className={className} aria-hidden="true" focusable="false">
       <defs>
-        <path id="seal-ring" d="M120,120 m-103,0 a103,103 0 1,1 206,0 a103,103 0 1,1 -206,0" />
+        <path id={ringId} d="M120,120 m-103,0 a103,103 0 1,1 206,0 a103,103 0 1,1 -206,0" />
       </defs>
-      <circle cx="120" cy="120" r="117" fill="#FCFDFF" />
-      <circle cx="120" cy="120" r="114" fill="none" stroke="#2446A8" strokeWidth="1.2" />
-      <circle cx="120" cy="120" r="93" fill="none" stroke="#2446A8" strokeWidth="0.8" />
+      <circle cx="120" cy="120" r="117" fill={colors.surface} />
+      <circle cx="120" cy="120" r="114" fill="none" stroke={colors.primary.strong} strokeWidth="1.2" />
+      <circle cx="120" cy="120" r="93" fill="none" stroke={colors.primary.strong} strokeWidth="0.8" />
       {/* textLength reparte la leyenda exactamente alrededor del círculo (2π·103 ≈ 647). */}
-      <text fill="#2446A8" fontFamily="Work Sans, sans-serif" fontSize="10.5">
-        <textPath href="#seal-ring" textLength="640" lengthAdjust="spacing">Gestor de Empleados ✦ Sistema de Recursos Humanos ✦</textPath>
-      </text>
+      {!compact && (
+        <text fill={colors.primary.strong} fontFamily="Work Sans, sans-serif" fontSize="10.5">
+          <textPath href={`#${ringId}`} textLength="640" lengthAdjust="spacing">Gestor de Empleados ✦ Sistema de Recursos Humanos ✦</textPath>
+        </text>
+      )}
       {SEAL_RINGS.map((d, i) => (
-        <path key={i} d={d} fill="none" stroke="#2446A8" strokeWidth={0.35} opacity={0.8} />
+        <path key={i} d={d} fill="none" stroke={colors.primary.strong} strokeWidth={compact ? 1.1 : 0.35} opacity={0.8} />
       ))}
-      <circle cx="120" cy="120" r="36" fill="#FCFDFF" stroke="#2446A8" strokeWidth="1" />
-      <text x="120" y="131" textAnchor="middle" fill="#16264F" fontFamily="Fraunces, serif" fontSize="30">RH</text>
+      <circle cx="120" cy="120" r={compact ? 50 : 36} fill={colors.surface} stroke={colors.primary.strong} strokeWidth={compact ? 3 : 1} />
+      <text x="120" y={compact ? 141 : 131} textAnchor="middle" fill={colors.ink.DEFAULT} fontFamily="Fraunces, serif" fontSize={compact ? 58 : 30}>RH</text>
     </svg>
   );
 }
@@ -64,7 +71,7 @@ export function EngravedBackground({ className = '' }) {
   return (
     <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" className={className} aria-hidden="true" focusable="false">
       {WAVES.map((d, i) => (
-        <path key={i} d={d} fill="none" stroke="#2C4480" strokeWidth="0.7" opacity="0.55" />
+        <path key={i} d={d} fill="none" stroke={colors.ink.line} strokeWidth="0.7" opacity="0.55" />
       ))}
     </svg>
   );

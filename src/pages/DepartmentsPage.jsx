@@ -45,7 +45,7 @@ export default function DepartmentsPage() {
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <header className="membrete mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-foreground">Departamentos</h1>
           <p className="mt-1 text-sm text-foreground-muted">{departments.length} registrados</p>
@@ -88,7 +88,7 @@ export default function DepartmentsPage() {
       {loading && departments.length === 0 ? (
         <Loading className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="rounded-lg border border-subtle bg-surface p-5" aria-hidden="true">
+            <div key={i} className="rounded-lg border border-outline bg-surface p-5" aria-hidden="true">
               <Skeleton className="h-5 w-32" />
               <Skeleton className="mt-2 h-3 w-48" />
               <div className="ledger-divider my-4" />
@@ -101,7 +101,7 @@ export default function DepartmentsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {departments.map((d) => (
-            <div key={d.id} className="rounded-lg border border-subtle bg-surface p-5">
+            <div key={d.id} className="rounded-lg border border-outline bg-surface p-5">
               <div className="flex items-start justify-between">
                 <h3 className="font-display text-lg text-foreground">{d.name}</h3>
                 {isAdmin && (
@@ -117,7 +117,7 @@ export default function DepartmentsPage() {
               </div>
               <p className="mt-1.5 text-sm text-foreground-muted">{d.description || 'Sin descripción'}</p>
               <div className="ledger-divider my-4" />
-              <p className="text-xs uppercase tracking-wide text-foreground-muted">
+              <p className="text-xs font-medium text-foreground-muted">
                 {d.employeeCount} empleado{d.employeeCount !== 1 ? 's' : ''} activo{d.employeeCount !== 1 ? 's' : ''}
               </p>
             </div>
@@ -176,7 +176,7 @@ function DepartmentModal({ initial, onClose, onSaved, showToast }) {
 
   return (
     <Modal onClose={onClose}>
-      <div className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6">
+      <div className="w-full max-w-sm rounded-lg border border-outline bg-surface p-6">
         <div className="mb-5 flex items-center justify-between">
           <h3 className="font-display text-lg text-foreground">{isEditing ? 'Editar departamento' : 'Nuevo departamento'}</h3>
           <button onClick={onClose} aria-label="Cerrar" className="rounded-md p-2 text-foreground-muted transition hover:text-foreground">

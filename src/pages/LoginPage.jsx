@@ -62,59 +62,59 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#16264F] px-4 py-10 sm:px-8 sm:py-16">
+    <div className="relative min-h-screen overflow-hidden bg-ink px-4 py-10 sm:px-8 sm:py-16">
       <EngravedBackground className="pointer-events-none absolute inset-0 h-full w-full" />
 
       {/* La hoja: un documento con doble filete, no una tarjeta. En escritorio se corre a la izquierda
           para dejar el sello sobre el espacio libre. */}
       <div className="relative mx-auto w-full max-w-[30rem]">
-        <Seal className="absolute -right-2 -top-8 z-10 h-20 w-20 rotate-[-12deg] drop-shadow-[0_6px_14px_rgba(5,14,40,0.45)] sm:-right-14 sm:-top-14 sm:h-40 sm:w-40 lg:-right-20 lg:-top-16 lg:h-48 lg:w-48" />
+        <Seal className="absolute -right-2 -top-8 z-10 h-20 w-20 rotate-[-12deg] drop-shadow-[0_6px_14px_rgba(6,22,16,0.45)] sm:-right-14 sm:-top-14 sm:h-40 sm:w-40 lg:-right-20 lg:-top-16 lg:h-48 lg:w-48" />
 
-        <main className="relative rounded-[3px] bg-[#FCFDFF] p-2 shadow-[0_30px_60px_-20px_rgba(5,14,40,0.7)]">
-          <div className="rounded-[2px] border border-[#C7CFE0] p-1">
-            <div className="rounded-[1px] border-2 border-[#16264F]/80 px-6 pb-6 pt-7 sm:px-9 sm:pt-9">
+        <main className="relative rounded-[3px] bg-surface p-2 shadow-[0_30px_60px_-20px_rgba(6,22,16,0.7)]">
+          <div className="rounded-[2px] border border-outline p-1">
+            <div className="rounded-[1px] border-2 border-ink/80 px-6 pb-6 pt-7 sm:px-9 sm:pt-9">
               {/* Membrete */}
               <header className="flex items-center gap-3 pr-12 sm:pr-20">
-                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[3px] bg-[#16264F] text-white">
+                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[3px] bg-ink text-white">
                   <BookUser className="h-5 w-5" strokeWidth={1.6} aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="font-display text-base leading-tight text-[#16264F] sm:text-xl">Gestor de Empleados</p>
+                  <p className="font-display text-base leading-tight text-ink sm:text-xl">Gestor de Empleados</p>
                   <p className="text-xs text-foreground-muted">Sistema de Recursos Humanos</p>
                 </div>
               </header>
-              <div className="mt-6 border-t border-[#16264F]/80" />
-              <div className="mt-[3px] border-t border-[#C7CFE0]" />
+              <div className="mt-6 border-t border-ink/80" />
+              <div className="mt-[3px] border-t border-outline" />
 
-              <h1 className="mt-7 font-display text-[2rem] leading-tight text-[#16264F]">Acceso al sistema</h1>
+              <h1 className="mt-7 font-display text-[2rem] leading-tight text-ink">Acceso al sistema</h1>
               <p className="mt-2 max-w-[34ch] text-sm leading-6 text-foreground-muted">
                 Para el personal de Recursos Humanos y para cada empleado con su propio portal.
               </p>
 
               <form onSubmit={handleSubmit} className="mt-7">
                 {/* Casillas de formulario oficial: la etiqueta vive dentro del recuadro. */}
-                <div className="divide-y divide-[#C7CFE0] border border-[#C7CFE0] focus-within:border-[#2446A8]">
-                  <label className="block px-3.5 pb-2 pt-2.5 focus-within:bg-[#2446A8]/[0.04] focus-within:shadow-[inset_3px_0_0_#2446A8]">
+                <div className="divide-y divide-outline border border-outline focus-within:border-primary">
+                  <label className="block px-3.5 pb-2 pt-2.5 focus-within:bg-primary/[0.04] focus-within:shadow-[inset_3px_0_0_theme(colors.primary.DEFAULT)]">
                     <span className="block text-xs text-foreground-muted">Usuario</span>
                     <input
                       id="username" type="text" required autoFocus autoComplete="username"
                       value={username} onChange={(e) => setUsername(e.target.value)}
-                      className="mt-0.5 w-full bg-transparent text-[15px] text-[#16264F] outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="mt-0.5 w-full bg-transparent text-[15px] text-ink outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                   </label>
-                  <label className="relative block px-3.5 pb-2 pt-2.5 focus-within:bg-[#2446A8]/[0.04] focus-within:shadow-[inset_3px_0_0_#2446A8]">
+                  <label className="relative block px-3.5 pb-2 pt-2.5 focus-within:bg-primary/[0.04] focus-within:shadow-[inset_3px_0_0_theme(colors.primary.DEFAULT)]">
                     <span className="block text-xs text-foreground-muted">Contraseña</span>
                     <input
                       id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
                       value={password} onChange={(e) => setPassword(e.target.value)}
-                      className="mt-0.5 w-full bg-transparent pr-10 text-[15px] text-[#16264F] outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="mt-0.5 w-full bg-transparent pr-10 text-[15px] text-ink outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
                       aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                       aria-pressed={showPassword}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[3px] p-2 text-foreground-muted transition hover:text-[#16264F]"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[3px] p-2 text-foreground-muted transition hover:text-ink"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" strokeWidth={1.6} /> : <Eye className="h-4 w-4" strokeWidth={1.6} />}
                     </button>
@@ -132,13 +132,13 @@ export default function LoginPage() {
                   <button
                     ref={submitRef}
                     type="submit" disabled={loading}
-                    className="flex items-center justify-center gap-2 rounded-[3px] bg-[#2446A8] px-7 py-3 text-sm font-medium text-white transition hover:bg-[#1D3B91] disabled:cursor-wait disabled:hover:bg-[#2446A8]"
+                    className="flex items-center justify-center gap-2 rounded-[3px] bg-primary px-7 py-3 text-sm font-medium text-white transition hover:bg-primary-strong disabled:cursor-wait disabled:hover:bg-primary"
                   >
                     {loading && <Spinner size={15} />}
                     {!loading ? 'Entrar' : retry ? `Conectando (intento ${retry.attempt} de ${retry.attempts})` : 'Entrando…'}
                   </button>
                   {retry && (
-                    <button type="button" onClick={() => abortRef.current?.abort()} className="text-sm text-foreground-muted underline underline-offset-4 hover:text-[#16264F]">
+                    <button type="button" onClick={() => abortRef.current?.abort()} className="text-sm text-foreground-muted underline underline-offset-4 hover:text-ink">
                       Cancelar
                     </button>
                   )}
@@ -155,28 +155,28 @@ export default function LoginPage() {
               {/* Talón desprendible con las credenciales de prueba. */}
               <section aria-labelledby="demo-title" className="mt-8">
                 <div className="relative -mx-6 sm:-mx-9" aria-hidden="true">
-                  <div className="border-t-2 border-dashed border-[#C7CFE0]" />
-                  <span className="absolute -left-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-[#16264F]" />
-                  <span className="absolute -right-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-[#16264F]" />
+                  <div className="border-t-2 border-dashed border-outline" />
+                  <span className="absolute -left-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-ink" />
+                  <span className="absolute -right-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-ink" />
                 </div>
-                <h2 id="demo-title" className="mt-6 font-display text-lg text-[#16264F]">Credenciales de demostración</h2>
+                <h2 id="demo-title" className="mt-6 font-display text-lg text-ink">Credenciales de demostración</h2>
                 <p className="mt-1 text-xs text-foreground-muted">Datos ficticios. Elige una cuenta para rellenar el acceso.</p>
-                <ul className="mt-4 divide-y divide-[#C7CFE0] border-y border-[#C7CFE0] text-sm">
+                <ul className="mt-4 divide-y divide-outline border-y border-outline text-sm">
                   {demoAccounts.map((account) => (
                     <li key={account.username} className="flex items-start justify-between gap-4 py-3.5">
                       <div className="min-w-0">
-                        <p className="font-medium text-[#16264F]">{account.role}</p>
+                        <p className="font-medium text-ink">{account.role}</p>
                         <p className="text-xs leading-5 text-foreground-muted">{account.scope}</p>
                         <dl className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs">
-                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Usuario</dt><dd className="text-[#16264F]">{account.username}</dd></div>
-                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Contraseña</dt><dd className="text-[#16264F]">{account.password}</dd></div>
+                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Usuario</dt><dd className="text-ink">{account.username}</dd></div>
+                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Contraseña</dt><dd className="text-ink">{account.password}</dd></div>
                         </dl>
                       </div>
                           <button
                             type="button"
                             onClick={() => fillDemo(account)}
                             aria-label={`Usar la cuenta de ${account.role}`}
-                            className="rounded-[3px] border border-[#16264F]/70 px-3 py-1.5 text-xs font-medium text-[#16264F] transition hover:bg-[#16264F] hover:text-white"
+                            className="rounded-[3px] border border-ink/70 px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-ink hover:text-white"
                           >
                             Usar
                           </button>
@@ -206,8 +206,8 @@ function ServerStatus({ status, onRecheck }) {
     waking: (
       <span className="flex items-center gap-2 text-foreground-muted">
         <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-[#2446A8] opacity-60 motion-safe:animate-ping" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2446A8]" />
+          <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 motion-safe:animate-ping" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
         </span>
         Despertando el servidor…
       </span>
@@ -215,7 +215,7 @@ function ServerStatus({ status, onRecheck }) {
     down: (
       <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-danger-strong">
         <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden="true" /> El servidor no responde</span>
-        <button type="button" onClick={onRecheck} className="inline-flex items-center gap-1 font-medium text-[#2446A8] hover:underline">
+        <button type="button" onClick={onRecheck} className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
           <RotateCcw className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" /> Volver a comprobar
         </button>
       </span>

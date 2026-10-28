@@ -59,7 +59,7 @@ export default function MyProfilePage() {
 
   return (
     <div className="max-w-3xl">
-      <header className="mb-6">
+      <header className="membrete mb-6">
         <h1 className="font-display text-3xl text-foreground">Mi perfil</h1>
         <p className="mt-1 text-sm text-foreground-muted">Tu información registrada en RH</p>
       </header>
@@ -71,7 +71,7 @@ export default function MyProfilePage() {
         </Loading>
       ) : (
       <>
-      <div className="rounded-lg border border-subtle bg-surface p-6">
+      <div className="rounded-lg border border-outline bg-surface p-6">
         <h2 className="font-display text-2xl text-foreground">{employee.fullName}</h2>
         <p className="mt-1 text-sm text-foreground-muted">{employee.position} · {employee.departmentName}</p>
 

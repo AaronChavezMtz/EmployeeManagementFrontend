@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, LogOut, BookUser, ShieldCheck, Menu, X, UserRound, CalendarDays, KeyRound } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, LogOut, ShieldCheck, Menu, X, UserRound, CalendarDays, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { Seal, EngravedBackground } from './Guilloche';
 
 const APP_NAME = 'Gestor de Empleados';
 
@@ -48,17 +49,15 @@ export default function Layout() {
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:text-foreground focus:shadow-lg">
         Saltar al contenido
       </a>
-      {/* Barra superior, solo en pantallas pequeñas */}
-      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-subtle bg-surface px-4 py-3 lg:hidden">
-        <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-primary">
-            <BookUser className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
-          </span>
-          <p className="font-display text-sm text-foreground">{APP_NAME}</p>
+      {/* Barra superior, solo en pantallas pequeñas: la tinta del lomo. */}
+      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between bg-ink px-4 py-2.5 text-white lg:hidden">
+        <div className="flex items-center gap-2.5">
+          <Seal compact className="h-8 w-8 flex-shrink-0" />
+          <p className="font-display text-sm">{APP_NAME}</p>
         </div>
         <button
           onClick={() => setMobileOpen(true)}
-          className="rounded-md p-2.5 text-foreground-muted transition hover:bg-muted"
+          className="rounded-md p-2.5 text-white/80 transition hover:bg-white/10 hover:text-white"
           aria-label="Abrir menú"
           aria-expanded={mobileOpen}
           aria-controls="menu-principal"
@@ -70,49 +69,52 @@ export default function Layout() {
       {/* Fondo oscuro detrás del menú móvil */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
+      {/* El lomo del expediente: tinta verde con el mismo grabado del login. */}
       <aside
         id="menu-principal"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-shrink-0 flex-col border-r border-subtle bg-surface transition-transform duration-200 border-r border-subtle lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-shrink-0 flex-col overflow-hidden bg-ink text-white transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between px-6 py-6">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-primary">
-              <BookUser className="h-4 w-4 text-white" strokeWidth={1.75} />
-            </span>
+        <EngravedBackground className="pointer-events-none absolute inset-0 h-full w-full opacity-60" />
+
+        <div className="relative flex items-center justify-between px-5 py-6">
+          <div className="flex items-center gap-3">
+            <Seal compact className="h-11 w-11 flex-shrink-0" />
             <div>
-              <p className="font-display text-base leading-tight text-foreground">{APP_NAME}</p>
-              <p className="text-[11px] text-foreground-muted">Registro de empleados</p>
+              <p className="font-display text-base leading-tight">{APP_NAME}</p>
+              <p className="text-[11px] text-white/75">Recursos Humanos</p>
             </div>
           </div>
           <button
             onClick={() => setMobileOpen(false)}
-            className="rounded-md p-2.5 text-foreground-muted transition hover:bg-muted lg:hidden"
+            className="rounded-md p-2.5 text-white/75 transition hover:bg-white/10 hover:text-white lg:hidden"
             aria-label="Cerrar menú"
           >
             <X className="h-4 w-4" strokeWidth={1.75} />
           </button>
         </div>
 
-        <div className="ledger-divider mx-6" />
+        {/* Doble filete, como el membrete del login. */}
+        <div className="relative mx-5 border-t border-white/40" />
+        <div className="relative mx-5 mt-[3px] border-t border-white/15" />
 
-        <nav className="flex flex-1 flex-col gap-1 px-3 py-5">
+        <nav className="relative flex flex-1 flex-col gap-0.5 px-3 py-5">
           {navItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition ${
+                `flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm transition ${
                   isActive
-                    ? 'bg-primary/10 text-primary-strong'
-                    : 'text-foreground-muted hover:bg-muted hover:text-foreground'
+                    ? 'bg-white/10 text-white shadow-[inset_3px_0_0_#FFFFFF]'
+                    : 'text-white/75 hover:bg-white/5 hover:text-white'
                 }`
               }
             >
@@ -122,28 +124,28 @@ export default function Layout() {
           ))}
         </nav>
 
-        <div className="ledger-divider mx-6" />
+        <div className="relative mx-5 border-t border-white/15" />
 
-        <div className="px-4 py-4">
-          <div className="flex items-center gap-2.5 rounded-md bg-muted px-3 py-2.5">
-            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-white">
+        <div className="relative px-4 py-4">
+          <div className="flex items-center gap-2.5 px-1 py-1.5">
+            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-white/40 font-display text-sm text-white">
               {user?.username?.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm text-foreground">{user?.username}</p>
-              <p className="text-[11px] text-foreground-muted">{isAdmin ? 'Administrador' : 'Empleado'}</p>
+              <p className="truncate text-sm text-white">{user?.username}</p>
+              <p className="text-[11px] text-white/75">{isAdmin ? 'Recursos Humanos' : 'Empleado'}</p>
             </div>
           </div>
           <NavLink
             to="/cambiar-contrasena"
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs text-foreground-muted transition hover:text-primary"
+            className="mt-2 flex w-full items-center gap-2 rounded-[3px] px-2 py-1.5 text-xs text-white/75 transition hover:text-white"
           >
             <KeyRound className="h-3.5 w-3.5" strokeWidth={1.75} />
             Cambiar contraseña
           </NavLink>
           <button
             onClick={logout}
-            className="mt-1 flex w-full items-center justify-center gap-2 rounded-md border border-outline px-3 py-2 text-xs font-medium text-foreground-muted transition hover:border-danger hover:bg-danger/5 hover:text-danger-strong"
+            className="mt-1 flex w-full items-center gap-2 rounded-[3px] border border-white/25 px-3 py-2 text-xs font-medium text-white/85 transition hover:border-white/60 hover:text-white"
           >
             <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
             Cerrar sesión
@@ -151,8 +153,8 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main id="contenido" tabIndex={-1} className="flex-1 overflow-y-auto p-3 pt-16 outline-none sm:p-6 lg:pt-6">
-        <div className="mx-auto max-w-6xl px-1 py-2 sm:px-2">
+      <main id="contenido" tabIndex={-1} className="min-w-0 flex-1 p-3 pt-[4.5rem] outline-none sm:p-6 sm:pt-[4.5rem] lg:p-10">
+        <div className="mx-auto max-w-6xl">
           <Outlet />
         </div>
       </main>
