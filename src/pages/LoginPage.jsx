@@ -1,16 +1,17 @@
 import { useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookUser, AlertCircle, ShieldCheck, UserRound, Eye, EyeOff, RotateCcw } from 'lucide-react';
+import { BookUser, AlertCircle, Eye, EyeOff, RotateCcw } from 'lucide-react';
 import { homePathFor } from '../utils/labels';
 import { useAuth } from '../context/AuthContext';
 import useServerStatus from '../hooks/useServerStatus';
 import Spinner from '../components/Spinner';
+import { Seal, EngravedBackground } from '../components/Guilloche';
 import { getErrorMessage } from '../utils/errors';
 import { isTransient } from '../api/retry';
 
 const demoAccounts = [
-  { role: 'Recursos Humanos', username: 'adminprueba', password: '123_Prueba', icon: ShieldCheck, note: 'Empleados, departamentos, solicitudes y usuarios' },
-  { role: 'Empleado', username: 'usuariolector', password: 'lector_123', icon: UserRound, note: 'Su ficha, su historial y sus vacaciones' },
+  { role: 'Recursos Humanos', scope: 'Administra personal, solicitudes y usuarios', username: 'adminprueba', password: '123_Prueba' },
+  { role: 'Empleado', scope: 'Consulta su expediente y pide vacaciones', username: 'usuariolector', password: 'lector_123' },
 ];
 
 export default function LoginPage() {
@@ -53,10 +54,6 @@ export default function LoginPage() {
     }
   }
 
-  function cancel() {
-    abortRef.current?.abort();
-  }
-
   function fillDemo(account) {
     setUsername(account.username);
     setPassword(account.password);
@@ -65,201 +62,165 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background lg:flex-row">
-      <BrandPanel />
+    <div className="relative min-h-screen overflow-hidden bg-[#16264F] px-4 py-10 sm:px-8 sm:py-16">
+      <EngravedBackground className="pointer-events-none absolute inset-0 h-full w-full" />
 
-      <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10 lg:py-16">
-        <div className="w-full max-w-sm">
-          <h1 className="font-display text-3xl text-foreground">Inicia sesión</h1>
-          <p className="mt-2 text-sm text-foreground-muted">Entra con tu usuario de Recursos Humanos o del portal del empleado.</p>
+      {/* La hoja: un documento con doble filete, no una tarjeta. En escritorio se corre a la izquierda
+          para dejar el sello sobre el espacio libre. */}
+      <div className="relative mx-auto w-full max-w-[30rem]">
+        <Seal className="absolute -right-2 -top-8 z-10 h-20 w-20 rotate-[-12deg] drop-shadow-[0_6px_14px_rgba(5,14,40,0.45)] sm:-right-14 sm:-top-14 sm:h-40 sm:w-40 lg:-right-20 lg:-top-16 lg:h-48 lg:w-48" />
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate={false}>
-            <label className="block text-sm">
-              <span className="mb-1.5 block text-foreground">Usuario</span>
-              <input
-                id="username" type="text" required autoFocus autoComplete="username"
-                value={username} onChange={(e) => setUsername(e.target.value)}
-                className="input bg-surface"
-              />
-            </label>
-            <label className="block text-sm">
-              <span className="mb-1.5 block text-foreground">Contraseña</span>
-              <span className="relative block">
-                <input
-                  id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="input bg-surface pr-11"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  aria-pressed={showPassword}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-foreground-muted transition hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" strokeWidth={1.75} /> : <Eye className="h-4 w-4" strokeWidth={1.75} />}
-                </button>
-              </span>
-            </label>
+        <main className="relative rounded-[3px] bg-[#FCFDFF] p-2 shadow-[0_30px_60px_-20px_rgba(5,14,40,0.7)]">
+          <div className="rounded-[2px] border border-[#C7CFE0] p-1">
+            <div className="rounded-[1px] border-2 border-[#16264F]/80 px-6 pb-6 pt-7 sm:px-9 sm:pt-9">
+              {/* Membrete */}
+              <header className="flex items-center gap-3 pr-12 sm:pr-20">
+                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[3px] bg-[#16264F] text-white">
+                  <BookUser className="h-5 w-5" strokeWidth={1.6} aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="font-display text-base leading-tight text-[#16264F] sm:text-xl">Gestor de Empleados</p>
+                  <p className="text-xs text-foreground-muted">Sistema de Recursos Humanos</p>
+                </div>
+              </header>
+              <div className="mt-6 border-t border-[#16264F]/80" />
+              <div className="mt-[3px] border-t border-[#C7CFE0]" />
 
-            {error && (
-              <div role="alert" className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger-strong">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                <span>{error}</span>
-              </div>
-            )}
+              <h1 className="mt-7 font-display text-[2rem] leading-tight text-[#16264F]">Acceso al sistema</h1>
+              <p className="mt-2 max-w-[34ch] text-sm leading-6 text-foreground-muted">
+                Para el personal de Recursos Humanos y para cada empleado con su propio portal.
+              </p>
 
-            <button
-              ref={submitRef}
-              type="submit" disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-wait disabled:hover:bg-primary"
-            >
-              {loading && <Spinner size={16} />}
-              {!loading ? 'Entrar' : retry ? `Conectando con el servidor (intento ${retry.attempt} de ${retry.attempts})` : 'Entrando…'}
-            </button>
-            {retry && (
-              <button type="button" onClick={cancel} className="w-full text-center text-sm text-foreground-muted underline-offset-2 hover:text-foreground hover:underline">
-                Cancelar
-              </button>
-            )}
-          </form>
+              <form onSubmit={handleSubmit} className="mt-7">
+                {/* Casillas de formulario oficial: la etiqueta vive dentro del recuadro. */}
+                <div className="divide-y divide-[#C7CFE0] border border-[#C7CFE0] focus-within:border-[#2446A8]">
+                  <label className="block px-3.5 pb-2 pt-2.5 focus-within:bg-[#2446A8]/[0.04] focus-within:shadow-[inset_3px_0_0_#2446A8]">
+                    <span className="block text-xs text-foreground-muted">Usuario</span>
+                    <input
+                      id="username" type="text" required autoFocus autoComplete="username"
+                      value={username} onChange={(e) => setUsername(e.target.value)}
+                      className="mt-0.5 w-full bg-transparent text-[15px] text-[#16264F] outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                  </label>
+                  <label className="relative block px-3.5 pb-2 pt-2.5 focus-within:bg-[#2446A8]/[0.04] focus-within:shadow-[inset_3px_0_0_#2446A8]">
+                    <span className="block text-xs text-foreground-muted">Contraseña</span>
+                    <input
+                      id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
+                      value={password} onChange={(e) => setPassword(e.target.value)}
+                      className="mt-0.5 w-full bg-transparent pr-10 text-[15px] text-[#16264F] outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      aria-pressed={showPassword}
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[3px] p-2 text-foreground-muted transition hover:text-[#16264F]"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" strokeWidth={1.6} /> : <Eye className="h-4 w-4" strokeWidth={1.6} />}
+                    </button>
+                  </label>
+                </div>
 
-          <ServerStatus status={server.status} onRecheck={server.recheck} />
+                {error && (
+                  <div role="alert" className="mt-4 flex items-start gap-2 border-l-2 border-danger-strong bg-danger/[0.07] px-3 py-2.5 text-sm text-danger-strong">
+                    <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                    <span>{error}</span>
+                  </div>
+                )}
 
-          <section aria-labelledby="demo-title" className="mt-10 border-t border-subtle pt-6">
-            <h2 id="demo-title" className="text-sm font-medium text-foreground">Cuentas de demostración</h2>
-            <p className="mt-1 text-xs text-foreground-muted">Elige una para rellenar el acceso. Los datos son ficticios.</p>
-            <ul className="mt-4 space-y-2">
-              {demoAccounts.map((account) => (
-                <li key={account.username}>
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <button
-                    type="button"
-                    onClick={() => fillDemo(account)}
-                    aria-label={`Usar la cuenta de ${account.role}: usuario ${account.username}`}
-                    className="group flex w-full items-center gap-3 rounded-lg border border-subtle bg-surface px-4 py-3 text-left transition hover:border-primary"
+                    ref={submitRef}
+                    type="submit" disabled={loading}
+                    className="flex items-center justify-center gap-2 rounded-[3px] bg-[#2446A8] px-7 py-3 text-sm font-medium text-white transition hover:bg-[#1D3B91] disabled:cursor-wait disabled:hover:bg-[#2446A8]"
                   >
-                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-strong">
-                      <account.icon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-medium text-foreground">{account.role}</span>
-                      <span className="block text-xs leading-5 text-foreground-muted">{account.note}</span>
-                    </span>
-                    <span className="text-right text-xs leading-5 text-foreground-muted">
-                      <span className="block font-mono text-foreground">{account.username}</span>
-                      <span className="block font-mono">{account.password}</span>
-                    </span>
+                    {loading && <Spinner size={15} />}
+                    {!loading ? 'Entrar' : retry ? `Conectando (intento ${retry.attempt} de ${retry.attempts})` : 'Entrando…'}
                   </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-      </main>
+                  {retry && (
+                    <button type="button" onClick={() => abortRef.current?.abort()} className="text-sm text-foreground-muted underline underline-offset-4 hover:text-[#16264F]">
+                      Cancelar
+                    </button>
+                  )}
+                  {!retry && <ServerStatus status={server.status} onRecheck={server.recheck} />}
+                </div>
+                {server.status === 'waking' && !retry && (
+                  <p className="mt-3 text-xs leading-5 text-foreground-muted">
+                    La demo usa un plan gratuito que se suspende sin uso; la primera conexión puede tardar hasta un minuto.
+                    Puedes escribir tus datos mientras tanto.
+                  </p>
+                )}
+              </form>
+
+              {/* Talón desprendible con las credenciales de prueba. */}
+              <section aria-labelledby="demo-title" className="mt-8">
+                <div className="relative -mx-6 sm:-mx-9" aria-hidden="true">
+                  <div className="border-t-2 border-dashed border-[#C7CFE0]" />
+                  <span className="absolute -left-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-[#16264F]" />
+                  <span className="absolute -right-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-[#16264F]" />
+                </div>
+                <h2 id="demo-title" className="mt-6 font-display text-lg text-[#16264F]">Credenciales de demostración</h2>
+                <p className="mt-1 text-xs text-foreground-muted">Datos ficticios. Elige una cuenta para rellenar el acceso.</p>
+                <ul className="mt-4 divide-y divide-[#C7CFE0] border-y border-[#C7CFE0] text-sm">
+                  {demoAccounts.map((account) => (
+                    <li key={account.username} className="flex items-start justify-between gap-4 py-3.5">
+                      <div className="min-w-0">
+                        <p className="font-medium text-[#16264F]">{account.role}</p>
+                        <p className="text-xs leading-5 text-foreground-muted">{account.scope}</p>
+                        <dl className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs">
+                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Usuario</dt><dd className="text-[#16264F]">{account.username}</dd></div>
+                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Contraseña</dt><dd className="text-[#16264F]">{account.password}</dd></div>
+                        </dl>
+                      </div>
+                          <button
+                            type="button"
+                            onClick={() => fillDemo(account)}
+                            aria-label={`Usar la cuenta de ${account.role}`}
+                            className="rounded-[3px] border border-[#16264F]/70 px-3 py-1.5 text-xs font-medium text-[#16264F] transition hover:bg-[#16264F] hover:text-white"
+                          >
+                            Usar
+                          </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
+          </div>
+        </main>
+
+        <p className="mt-5 text-center text-xs text-white/75">Acceso para personal autorizado. Proyecto de portafolio con datos ficticios.</p>
+      </div>
     </div>
   );
 }
 
-// Una línea de estado en vez de un spinner mudo: la API de la demo se suspende sin uso.
+// Estado de la API de la demo, que se suspende sin uso.
 function ServerStatus({ status, onRecheck }) {
   const content = {
     checking: null,
     ready: (
       <span className="flex items-center gap-2 text-foreground-muted">
-        <span className="h-2 w-2 rounded-full bg-success" aria-hidden="true" /> Servidor listo
+        <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" /> Servidor listo
       </span>
     ),
     waking: (
-      <span className="flex items-start gap-2 text-foreground-muted">
-        <span className="relative mt-1.5 flex h-2 w-2 flex-shrink-0" aria-hidden="true">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 motion-safe:animate-ping" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+      <span className="flex items-center gap-2 text-foreground-muted">
+        <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-[#2446A8] opacity-60 motion-safe:animate-ping" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2446A8]" />
         </span>
-        <span>
-          Despertando el servidor. La demo usa un plan gratuito que se suspende sin uso, así que la primera
-          conexión puede tardar hasta un minuto. Puedes escribir tus datos mientras tanto.
-        </span>
+        Despertando el servidor…
       </span>
     ),
     down: (
       <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-danger-strong">
-        <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-danger" aria-hidden="true" /> El servidor no responde.</span>
-        <button type="button" onClick={onRecheck} className="inline-flex items-center gap-1 font-medium text-primary-strong hover:underline">
+        <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden="true" /> El servidor no responde</span>
+        <button type="button" onClick={onRecheck} className="inline-flex items-center gap-1 font-medium text-[#2446A8] hover:underline">
           <RotateCcw className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" /> Volver a comprobar
         </button>
       </span>
     ),
   }[status];
 
-  return <p role="status" className="mt-5 min-h-[1.25rem] text-xs leading-5">{content}</p>;
-}
-
-// Panel de marca: un fichero de expedientes de personal, el objeto propio del trabajo de RH.
-function BrandPanel() {
-  return (
-    <aside className="relative overflow-hidden bg-primary-strong px-6 py-8 text-white sm:px-10 lg:flex lg:w-[46%] lg:flex-col lg:justify-between lg:py-12">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
-          <BookUser className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
-        </span>
-        <span className="font-display text-lg">Gestor de Empleados</span>
-      </div>
-
-      <IndexCards />
-
-      <div className="mt-6 max-w-md lg:mt-0">
-        <p className="font-display text-2xl leading-tight sm:text-3xl lg:text-4xl">La plantilla completa, en un solo expediente.</p>
-        <p className="mt-3 text-sm leading-6 text-white/80">
-          Altas, bajas, vacaciones e historial de cada persona, con un portal para que el equipo consulte lo suyo.
-        </p>
-        <p className="mt-6 hidden text-xs text-white/70 lg:block">Proyecto de portafolio con datos ficticios.</p>
-      </div>
-    </aside>
-  );
-}
-
-// Tres fichas apiladas con su pestaña, como en un fichero de RH. Decorativas.
-// Los tintes azulados de las fichas del fondo solo existen en esta ilustración.
-function IndexCards() {
-  const shadow = '0 18px 40px -12px rgba(10, 24, 70, 0.55)';
-  return (
-    <div aria-hidden="true" className="relative mx-auto my-10 hidden h-80 w-full max-w-md lg:block">
-      <Card className="left-12 top-0 -rotate-[6deg] bg-[#DCE4F7]" tab="Nómina" tabPosition="left-[11.5rem]" shadow={shadow}>
-        <div className="space-y-2 opacity-60">
-          <div className="h-2 w-32 rounded bg-[#9DB0DF]" /><div className="h-2 w-24 rounded bg-[#9DB0DF]" />
-        </div>
-      </Card>
-      <Card className="left-16 top-10 rotate-[3deg] bg-[#EEF2FC]" tab="Vacaciones" tabPosition="left-[6.5rem]" shadow={shadow}>
-        <span className="inline-block rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-medium text-success-ink">5 días aprobados</span>
-      </Card>
-      <Card className="left-4 top-[5.5rem] -rotate-1 bg-white" tab="Expediente" tabPosition="left-5" shadow={shadow}>
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-medium text-white">AG</span>
-          <div>
-            <p className="text-sm font-medium text-foreground">Ana García</p>
-            <p className="text-xs text-foreground-muted">Desarrolladora Backend</p>
-          </div>
-          <span className="ml-auto rounded-full bg-success/15 px-2 py-0.5 text-[11px] text-success-ink">Activa</span>
-        </div>
-        <div className="ledger-divider my-3" />
-        <dl className="grid grid-cols-2 gap-y-1.5 text-xs">
-          <dt className="text-foreground-muted">Departamento</dt><dd className="text-foreground">Tecnología</dd>
-          <dt className="text-foreground-muted">Antigüedad</dt><dd className="text-foreground">2 años, 6 meses</dd>
-          <dt className="text-foreground-muted">Vacaciones</dt><dd className="text-foreground">9 de 14 días</dd>
-        </dl>
-      </Card>
-    </div>
-  );
-}
-
-function Card({ className, tab, tabPosition, shadow, children }) {
-  return (
-    <div className={`absolute w-80 rounded-xl p-5 pt-6 ${className}`} style={{ boxShadow: shadow }}>
-      {/* Pestaña de la ficha, sobresaliendo del borde superior. */}
-      <span className={`absolute -top-3 ${tabPosition} rounded-t-md px-3 pt-1 text-[11px] font-medium text-primary-strong`} style={{ backgroundColor: 'inherit' }}>
-        {tab}
-      </span>
-      {children}
-    </div>
-  );
+  return <p role="status" className="text-xs">{content}</p>;
 }
