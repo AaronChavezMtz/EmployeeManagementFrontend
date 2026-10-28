@@ -43,7 +43,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 ### Inicio de sesión
 
 <p align="center">
-  <img src="docs/images/login.png" width="600" alt="Pantalla de inicio de sesión">
+  <img src="docs/images/login.png" width="600" alt="Inicio de sesión con panel de marca, estado del servidor y cuentas de demostración">
 </p>
 
 ### Dashboard
@@ -95,6 +95,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 - **Acceso al portal automático**: al dar de alta un empleado (o desde su ficha) se crea su usuario con el correo y una contraseña temporal que se muestra una sola vez; el empleado debe cambiarla al entrar
 - **Dashboard**: plantilla activa, rotación de 12 meses, antigüedad promedio, altas y bajas por mes, bajas por motivo y nómina por departamento
 - **Exportación** de reportes a Excel y PDF
+- **Arranque en frío de la API**: el login despierta la API al abrirse y muestra su estado; el inicio de sesión se reintenta con espera creciente (hasta 5 intentos, cancelable) y las lecturas se reintentan solas. Todas las peticiones tienen tiempo límite
 - **Manejo de errores centralizado**: distingue errores de red (API no disponible) de errores de negocio, con notificaciones (toast) para confirmar cada acción
 - **Responsivo**: menú lateral colapsable en móvil/tablet, tablas con scroll horizontal
 
