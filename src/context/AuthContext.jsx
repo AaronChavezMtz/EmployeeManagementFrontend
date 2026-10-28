@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import client from '../api/client';
+import { withRetry } from '../api/retry';
 
 const AuthContext = createContext(null);
 
@@ -16,8 +17,13 @@ export function AuthProvider({ children }) {
     return parsed;
   });
 
-  const login = useCallback(async (username, password) => {
-    const { data } = await client.post('/auth/login', { username, password });
+  // El login se reintenta si la API está despertando (el POST de login no crea nada, repetirlo es seguro).
+  // options: { signal, onRetry } para cancelar desde la interfaz y mostrar el intento en curso.
+  const login = useCallback(async (username, password, options = {}) => {
+    const { data } = await withRetry(
+      () => client.post('/auth/login', { username, password }, { signal: options.signal }),
+      { signal: options.signal, onRetry: options.onRetry },
+    );
     const sessionUser = {
       username: data.username, role: data.role, expiresAtUtc: data.expiresAtUtc,
       mustChangePassword: data.mustChangePassword,
