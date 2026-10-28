@@ -28,6 +28,15 @@
   }
 }
 
+@layer components {
+  /* Doble filete del membrete (igual que en el login): una línea de tinta y otra de filete debajo. */
+  .membrete {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid theme('colors.ink.DEFAULT / 0.75');
+    box-shadow: 0 4px 0 -3px theme('colors.outline');
+  }
+}
+
 @layer utilities {
   .ledger-divider {
     background-image: repeating-linear-gradient(

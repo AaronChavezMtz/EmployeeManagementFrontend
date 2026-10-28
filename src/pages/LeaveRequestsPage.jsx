@@ -45,7 +45,7 @@ export default function LeaveRequestsPage() {
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="membrete mb-6">
         <h1 className="font-display text-3xl text-foreground">Solicitudes de ausencia</h1>
         <p className="mt-1 text-sm text-foreground-muted">Vacaciones, incapacidades y permisos de la plantilla</p>
       </header>
@@ -55,7 +55,7 @@ export default function LeaveRequestsPage() {
           <button
             key={f.value}
             onClick={() => setStatus(f.value)}
-            className={`rounded-full px-3.5 py-1.5 text-sm transition ${
+            className={`rounded px-3.5 py-1.5 text-sm transition ${
               status === f.value ? 'bg-primary text-white' : 'border border-outline text-foreground-muted hover:border-primary'
             }`}
           >
@@ -70,18 +70,18 @@ export default function LeaveRequestsPage() {
         {!requests ? (
           <SkeletonCards count={3} withActions />
         ) : requests.length === 0 ? (
-          <li className="rounded-lg border border-subtle bg-surface py-10 text-center text-sm text-foreground-muted">No hay solicitudes en esta vista.</li>
+          <li className="rounded-lg border border-outline bg-surface py-10 text-center text-sm text-foreground-muted">No hay solicitudes en esta vista.</li>
         ) : (
           requests.map((r) => {
             const st = leaveStatuses[r.status] ?? leaveStatuses.Pending;
             return (
-              <li key={r.id} className="rounded-lg border border-subtle bg-surface p-4">
+              <li key={r.id} className="rounded-lg border border-outline bg-surface p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <Link to={`/empleados/${r.employeeId}`} className="font-medium text-foreground">{r.employeeName}</Link>
                     <p className="text-sm text-foreground-muted">{leaveTypes[r.type] ?? r.type}</p>
                   </div>
-                  <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${st.classes}`}>{st.label}</span>
+                  <span className={`flex-shrink-0 rounded px-2 py-0.5 font-medium text-xs ${st.classes}`}>{st.label}</span>
                 </div>
                 <p className="mt-1 text-sm text-foreground-muted">{formatDate(r.startDate)} – {formatDate(r.endDate)} · {r.days} {r.days === 1 ? 'día' : 'días'}</p>
                 {r.reason && <p className="mt-1 text-sm text-foreground-muted">{r.reason}</p>}
@@ -102,10 +102,10 @@ export default function LeaveRequestsPage() {
         )}
       </ul>
 
-      <div className="hidden overflow-x-auto rounded-lg border border-subtle bg-surface sm:block">
+      <div className="hidden overflow-x-auto rounded-lg border border-outline bg-surface sm:block">
         <table className="w-full tabular-nums min-w-[760px] text-sm">
           <thead>
-            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
+            <tr className="border-b border-ink/60 bg-muted/60 text-left text-xs font-medium text-foreground-muted">
               <th className="px-5 py-3 font-normal">Empleado</th>
               <th className="px-5 py-3 font-normal">Tipo</th>
               <th className="px-5 py-3 font-normal">Fechas</th>
@@ -132,7 +132,7 @@ export default function LeaveRequestsPage() {
                     <td className="px-5 py-3 text-foreground-muted">{formatDate(r.startDate)} – {formatDate(r.endDate)}</td>
                     <td className="px-5 py-3 text-foreground-muted">{r.days}</td>
                     <td className="px-5 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs ${st.classes}`}>{st.label}</span>
+                      <span className={`rounded px-2 py-0.5 font-medium text-xs ${st.classes}`}>{st.label}</span>
                       {r.reviewedBy && <p className="mt-1 text-xs text-foreground-muted">por {r.reviewedBy}{r.reviewComment ? `: “${r.reviewComment}”` : ''}</p>}
                     </td>
                     <td className="px-5 py-3">
@@ -181,7 +181,7 @@ function ReviewDialog({ reviewing, onSubmit, onCancel }) {
 
   return (
     <Modal onClose={onCancel}>
-      <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6 shadow-xl">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg border border-outline bg-surface p-6 shadow-xl">
         <h3 className="font-display text-lg text-foreground">{isReject ? 'Rechazar solicitud' : 'Aprobar solicitud'}</h3>
         <p className="mt-2 text-sm text-foreground-muted">
           {leaveTypes[request.type]} de {request.employeeName}: {formatDate(request.startDate)} – {formatDate(request.endDate)} ({request.days} días hábiles).

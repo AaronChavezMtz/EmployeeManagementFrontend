@@ -68,7 +68,7 @@ export default function UsersPage() {
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <header className="membrete mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-foreground">Usuarios</h1>
           <p className="mt-1 text-sm text-foreground-muted">Quién puede entrar al sistema y con qué permisos</p>
@@ -96,10 +96,10 @@ export default function UsersPage() {
 
       {error && <p className="mb-4 text-sm text-danger-strong">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-subtle bg-surface">
+      <div className="overflow-x-auto rounded-lg border border-outline bg-surface">
         <table className="w-full tabular-nums min-w-[720px] text-sm">
           <thead>
-            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
+            <tr className="border-b border-ink/60 bg-muted/60 text-left text-xs font-medium text-foreground-muted">
               <th className="px-5 py-3 font-normal">Usuario</th>
               <th className="px-5 py-3 font-normal">Correo</th>
               <th className="px-5 py-3 font-normal">Rol</th>
@@ -127,7 +127,7 @@ export default function UsersPage() {
                     </td>
                     <td className="px-5 py-3 text-foreground-muted">{u.email}</td>
                     <td className="px-5 py-3">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs ${
+                      <span className={`inline-flex items-center gap-1.5 rounded px-2 py-0.5 font-medium text-xs ${
                         u.role === 'Admin' ? 'bg-primary/10 text-primary-strong' : 'bg-subtle text-foreground-muted'
                       }`}>
                         {u.role === 'Admin' ? <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.75} /> : <UserRound className="h-3.5 w-3.5" strokeWidth={1.75} />}
@@ -138,14 +138,14 @@ export default function UsersPage() {
                     <td className="px-5 py-3">
                       {/* Sin permiso para cambiarla, el estado es solo informativo: con sus colores normales, no atenuado. */}
                       {locked ? (
-                        <span className={`rounded-full px-2.5 py-1 text-xs ${u.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
+                        <span className={`rounded px-2 py-0.5 font-medium text-xs ${u.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
                           {u.isActive ? 'Activo' : 'Inactivo'}
                         </span>
                       ) : (
                         <button
                           onClick={() => toggleActive(u)}
                           title="Clic para activar o desactivar"
-                          className={`rounded-full px-2.5 py-1 text-xs transition hover:ring-2 hover:ring-outline ${
+                          className={`rounded px-2 py-0.5 font-medium text-xs transition hover:ring-2 hover:ring-outline ${
                             u.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'
                           }`}
                         >
@@ -244,7 +244,7 @@ function UserModal({ user, users, onClose, onSaved, showToast }) {
 
   return (
     <Modal onClose={onClose}>
-      <div className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6">
+      <div className="w-full max-w-sm rounded-lg border border-outline bg-surface p-6">
         <div className="mb-5 flex items-center justify-between">
           <h3 className="font-display text-lg text-foreground">{isEditing ? `Editar ${user.username}` : 'Nuevo usuario'}</h3>
           <button onClick={onClose} aria-label="Cerrar" className="rounded-md p-2 text-foreground-muted transition hover:text-foreground">

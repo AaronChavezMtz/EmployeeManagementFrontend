@@ -1,30 +1,42 @@
-// Única fuente de los colores: la usan Tailwind (tailwind.config.js) y las gráficas (Recharts),
-// que necesitan los valores en JS. Nombres por función, no por tono.
+// Única fuente de los colores: la usan Tailwind (tailwind.config.js), las gráficas (Recharts)
+// y el grabado del login y del lomo (Guilloche.jsx). Nombres por función, no por tono.
+// Paleta "verde de seguridad": el verde del papel de seguridad y del grabado guilloché.
 // Contrastes medidos contra WCAG AA (4.5:1 para texto).
 export const colors = {
-  background: '#F4F6FA',   // fondo de la app
-  surface: '#FFFFFF',      // tarjetas, barra lateral, diálogos
-  muted: '#F1F3F7',        // hover, fondo de inputs
-  subtle: '#E3E6EC',       // bordes suaves, chips neutros, esqueletos
-  outline: '#CBD1DB',      // bordes de inputs y botones secundarios
+  background: '#F3F5F2',   // fondo de la app: gris verdoso muy claro, frío
+  surface: '#FFFFFF',      // hojas, diálogos
+  muted: '#EDF1EE',        // hover, fondo de inputs
+  subtle: '#DCE4DF',       // filetes suaves, chips neutros, esqueletos
+  outline: '#C5D2CA',      // bordes de casillas e inputs
+
+  // Tinta del expediente: lomo (barra lateral) y fondo del login.
+  ink: {
+    DEFAULT: '#14302A',    // blanco encima: 14:1
+    line: '#2A4D41',       // líneas del grabado sobre la tinta
+  },
 
   foreground: {
-    DEFAULT: '#1C2433',    // texto principal (14:1)
-    muted: '#5B6475',      // texto secundario (6:1 sobre surface, 4.8:1 sobre subtle)
+    DEFAULT: '#17241F',    // texto principal (16:1)
+    muted: '#53625A',      // texto secundario (6.4:1 sobre surface, 5:1 sobre subtle)
   },
 
   primary: {
-    DEFAULT: '#2F5BD1',    // acciones principales (5.9:1 con texto blanco)
-    hover: '#3D6BE0',
-    strong: '#2446A8',     // texto azul sobre tintes, marca del login
+    DEFAULT: '#1F5C45',    // verde botella: acciones (7.9:1 con texto blanco)
+    hover: '#256B51',
+    strong: '#174836',     // texto verde sobre tintes, sello
   },
   danger: {
-    DEFAULT: '#D64545',    // iconos y tintes
-    strong: '#B83838',     // texto y botones destructivos (5.7:1)
+    DEFAULT: '#C24646',    // iconos y tintes
+    strong: '#A83434',     // texto y botones destructivos (6.6:1)
   },
   success: {
-    DEFAULT: '#1F9D63',    // iconos y tintes
-    strong: '#187E4F',     // texto y botones (5.1:1)
-    ink: '#146B43',        // texto sobre el tinte verde de los chips (5.5:1)
+    DEFAULT: '#2A8A5E',    // iconos y tintes
+    strong: '#1E7049',     // texto y botones (6:1)
+    ink: '#185C3C',        // texto sobre el tinte verde de los chips (6.6:1)
+  },
+  // Pendiente / en revisión: ámbar, para no confundirse con el verde de "aprobado" ni de las acciones.
+  warning: {
+    DEFAULT: '#C98A1B',
+    ink: '#7A4F00',        // texto sobre el tinte ámbar (6.2:1)
   },
 };

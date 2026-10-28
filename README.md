@@ -125,7 +125,8 @@ La interfaz refleja estos permisos, pero **la autorización real vive en la API*
 | **`ProtectedRoute` por rol** | Protege rutas completas y evita renderizar vistas a usuarios sin permiso. |
 | **Mensajes de error normalizados** (`utils`) | Una sola función traduce errores de la API a mensajes claros para el usuario. |
 | **Tailwind CSS** | Estilos consistentes y diseño responsivo sin CSS disperso. |
-| **Tokens de color por función** (`src/theme.js`) | `primary`, `surface`, `foreground-muted`, `danger`… en una sola fuente que usan Tailwind y las gráficas; todos los pares de texto cumplen WCAG AA (≥ 4.5:1). |
+| **Identidad de documento institucional** | Paleta "verde de seguridad" (la del papel y el grabado guilloché), barra lateral como lomo del expediente con sello, encabezados con membrete de doble filete y KPIs como casillas de formulario. El sello y el grabado se generan con hipotrocoides en SVG. |
+| **Tokens de color por función** (`src/theme.js`) | `primary`, `ink`, `surface`, `foreground-muted`, `warning`… en una sola fuente que usan Tailwind, las gráficas y el grabado; todos los pares de texto cumplen WCAG AA (≥ 4.5:1). |
 | **Recharts** | Gráficas declarativas y ligeras para las tendencias del dashboard. |
 
 ## Stack

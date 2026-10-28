@@ -116,7 +116,7 @@ export default function EmployeesPage() {
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <header className="membrete mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-foreground">Empleados</h1>
           {firstLoad
@@ -200,16 +200,16 @@ export default function EmployeesPage() {
         {firstLoad ? (
           <SkeletonCards count={5} withActions={isAdmin} />
         ) : data.items.length === 0 ? (
-          <li className="rounded-lg border border-subtle bg-surface py-10 text-center text-sm text-foreground-muted">Sin resultados para este filtro.</li>
+          <li className="rounded-lg border border-outline bg-surface py-10 text-center text-sm text-foreground-muted">Sin resultados para este filtro.</li>
         ) : (
           data.items.map((emp) => (
-            <li key={emp.id} className="rounded-lg border border-subtle bg-surface p-4">
+            <li key={emp.id} className="rounded-lg border border-outline bg-surface p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Link to={`/empleados/${emp.id}`} className="font-medium text-foreground">{emp.fullName}</Link>
                   <p className="truncate text-sm text-foreground-muted">{emp.position} · {emp.departmentName}</p>
                 </div>
-                <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
+                <span className={`flex-shrink-0 rounded px-2 py-0.5 font-medium text-xs ${emp.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
                   {emp.isActive ? 'Activo' : 'Inactivo'}
                 </span>
               </div>
@@ -235,10 +235,10 @@ export default function EmployeesPage() {
         )}
       </ul>
 
-      <div className="hidden overflow-x-auto rounded-lg border border-subtle bg-surface sm:block">
+      <div className="hidden overflow-x-auto rounded-lg border border-outline bg-surface sm:block">
         <table className="w-full tabular-nums min-w-[720px] text-sm">
           <thead>
-            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
+            <tr className="border-b border-ink/60 bg-muted/60 text-left text-xs font-medium text-foreground-muted">
               <th className="px-5 py-3 font-normal">Nombre</th>
               <th className="px-5 py-3 font-normal">Departamento</th>
               <th className="px-5 py-3 font-normal">Puesto</th>
@@ -265,7 +265,7 @@ export default function EmployeesPage() {
                   <td className="px-5 py-3 text-foreground-muted">{emp.position}</td>
                   <td className="px-5 py-3 text-foreground-muted">{currency.format(emp.salary)}</td>
                   <td className="px-5 py-3">
-                    <span className={`rounded-full px-2.5 py-1 text-xs ${emp.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
+                    <span className={`rounded px-2 py-0.5 font-medium text-xs ${emp.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
                       {emp.isActive ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>

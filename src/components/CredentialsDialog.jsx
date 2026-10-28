@@ -18,7 +18,7 @@ export default function CredentialsDialog({ access, employeeName, onClose }) {
 
   return (
     <Modal onClose={onClose}>
-      <div className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6 shadow-xl">
+      <div className="w-full max-w-sm rounded-lg border border-outline bg-surface p-6 shadow-xl">
         <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/15">
           <KeyRound className="h-5 w-5 text-success-strong" strokeWidth={1.75} />
         </span>

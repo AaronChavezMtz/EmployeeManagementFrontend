@@ -11,8 +11,8 @@ const emptyForm = (type = 'Vacation') => ({ type, startDate: '', endDate: '', re
 
 function BalanceCard({ label, value, hint }) {
   return (
-    <div className="rounded-lg border border-subtle bg-surface p-5">
-      <p className="text-xs uppercase tracking-wide text-foreground-muted">{label}</p>
+    <div className="bg-surface p-5">
+      <p className="text-xs font-medium text-foreground-muted">{label}</p>
       <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
       {hint && <p className="mt-1 text-xs text-foreground-muted">{hint}</p>}
     </div>
@@ -79,7 +79,7 @@ export default function MyLeavePage() {
 
   return (
     <div className="max-w-4xl">
-      <header className="mb-6">
+      <header className="membrete mb-6">
         <h1 className="font-display text-3xl text-foreground">Mis ausencias</h1>
         <p className="mt-1 text-sm text-foreground-muted">
           {balance && balance.entitledDays > 0 ? `Periodo de vacaciones del ${formatDate(balance.periodStart)} al ${formatDate(balance.periodEnd)}` : 'Tu saldo de vacaciones y tus solicitudes'}
@@ -88,10 +88,10 @@ export default function MyLeavePage() {
 
 {!loaded ? (
         <Loading>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-outline bg-outline lg:grid-cols-4">
             {[0, 1, 2, 3].map((i) => <SkeletonStat key={i} />)}
           </div>
-          <div className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+          <div className="mt-6 rounded-lg border border-outline bg-surface p-6">
             <Skeleton className="h-5 w-40" />
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
               {[0, 1, 2].map((i) => <Skeleton key={i} className="h-10 w-full" />)}
@@ -112,7 +112,7 @@ export default function MyLeavePage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-outline bg-outline lg:grid-cols-4">
           <BalanceCard label="Disponibles" value={balance.availableDays} hint="días hábiles" />
           <BalanceCard label="Corresponden" value={balance.entitledDays} hint={`${balance.yearsOfService} años de servicio (LFT)`} />
           <BalanceCard label="Aprobados" value={balance.approvedDays} />
@@ -120,7 +120,7 @@ export default function MyLeavePage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+      <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-outline bg-surface p-6">
         <h2 className="flex items-center gap-2 font-display text-lg text-foreground">
           <CalendarPlus className="h-5 w-5 text-primary" strokeWidth={1.75} />
           Nueva solicitud
@@ -173,15 +173,15 @@ export default function MyLeavePage() {
       {/* Móvil: tarjetas; en una tabla de 640 px el estado y "Cancelar" quedaban fuera de la pantalla. */}
       <ul className="mt-3 space-y-3 sm:hidden">
         {requests.length === 0 ? (
-          <li className="rounded-lg border border-subtle bg-surface py-10 text-center text-sm text-foreground-muted">Aún no tienes solicitudes.</li>
+          <li className="rounded-lg border border-outline bg-surface py-10 text-center text-sm text-foreground-muted">Aún no tienes solicitudes.</li>
         ) : (
           requests.map((r) => {
             const status = leaveStatuses[r.status] ?? leaveStatuses.Pending;
             return (
-              <li key={r.id} className="rounded-lg border border-subtle bg-surface p-4">
+              <li key={r.id} className="rounded-lg border border-outline bg-surface p-4">
                 <div className="flex items-start justify-between gap-3">
                   <p className="font-medium text-foreground">{leaveTypes[r.type] ?? r.type}</p>
-                  <span className={`flex-shrink-0 rounded-full px-2.5 py-1 text-xs ${status.classes}`}>{status.label}</span>
+                  <span className={`flex-shrink-0 rounded px-2 py-0.5 font-medium text-xs ${status.classes}`}>{status.label}</span>
                 </div>
                 <p className="mt-1 text-sm text-foreground-muted">{formatDate(r.startDate)} – {formatDate(r.endDate)} · {r.days} {r.days === 1 ? 'día' : 'días'}</p>
                 {r.reason && <p className="mt-1 text-sm text-foreground-muted">{r.reason}</p>}
@@ -195,10 +195,10 @@ export default function MyLeavePage() {
         )}
       </ul>
 
-      <div className="mt-3 hidden overflow-x-auto rounded-lg border border-subtle bg-surface sm:block">
+      <div className="mt-3 hidden overflow-x-auto rounded-lg border border-outline bg-surface sm:block">
         <table className="w-full tabular-nums min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
+            <tr className="border-b border-ink/60 bg-muted/60 text-left text-xs font-medium text-foreground-muted">
               <th className="px-5 py-3 font-normal">Tipo</th>
               <th className="px-5 py-3 font-normal">Fechas</th>
               <th className="px-5 py-3 font-normal">Días</th>
@@ -221,7 +221,7 @@ export default function MyLeavePage() {
                     <td className="px-5 py-3 text-foreground-muted">{formatDate(r.startDate)} – {formatDate(r.endDate)}</td>
                     <td className="px-5 py-3 text-foreground-muted">{r.days}</td>
                     <td className="px-5 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs ${status.classes}`}>{status.label}</span>
+                      <span className={`rounded px-2 py-0.5 font-medium text-xs ${status.classes}`}>{status.label}</span>
                       {r.reviewComment && <p className="mt-1 text-xs text-foreground-muted">“{r.reviewComment}”</p>}
                     </td>
                     <td className="px-5 py-3 text-right">

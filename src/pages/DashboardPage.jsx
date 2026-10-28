@@ -29,9 +29,9 @@ const chartTooltipStyle = { background: colors.surface, border: `1px solid ${col
 function StatCard({ icon: Icon, label, value, hint, accent = 'gold' }) {
   const accentClasses = { gold: 'text-primary', sage: 'text-success-strong', clay: 'text-danger-strong' };
   return (
-    <div className="rounded-lg border border-subtle bg-surface p-4 sm:p-5">
+    <div className="bg-surface p-4 sm:p-5">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs uppercase tracking-wide text-foreground-muted">{label}</p>
+        <p className="text-xs font-medium text-foreground-muted">{label}</p>
         <Icon className={`h-4 w-4 ${accentClasses[accent]}`} strokeWidth={1.75} />
       </div>
       <p className="mt-2 text-xl font-semibold tabular-nums text-foreground sm:mt-3 sm:text-2xl">{value}</p>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <header className="membrete mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl text-foreground">Resumen general</h1>
           <p className="mt-1 text-sm text-foreground-muted">Datos agregados por departamento y tendencias de los últimos 12 meses</p>
@@ -104,12 +104,12 @@ export default function DashboardPage() {
 
 {!loaded ? (
         <Loading>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-outline bg-outline lg:grid-cols-4">
             {[0, 1, 2, 3].map((i) => <SkeletonStat key={i} />)}
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {[0, 1].map((i) => (
-              <div key={i} className="rounded-lg border border-subtle bg-surface p-6">
+              <div key={i} className="rounded-lg border border-outline bg-surface p-6">
                 <Skeleton className="h-5 w-44" />
                 <Skeleton className="mt-2 h-3 w-24" />
                 <Skeleton className="mt-5 h-64 w-full" />
@@ -119,7 +119,7 @@ export default function DashboardPage() {
         </Loading>
       ) : (
       <>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-outline bg-outline lg:grid-cols-4">
         <StatCard icon={Users} label="Plantilla activa" value={kpis.activeHeadcount} hint={`${summary.length} departamentos`} accent="sage" />
         <StatCard
           icon={TrendingDown}
@@ -135,7 +135,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-subtle bg-surface p-6">
+        <div className="rounded-lg border border-outline bg-surface p-6">
           <h2 className="font-display text-lg text-foreground">Altas y bajas por mes</h2>
           <p className="mt-0.5 text-xs text-foreground-muted">Últimos 12 meses</p>
           <div className="mt-5 h-64">
@@ -163,7 +163,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-lg border border-subtle bg-surface p-6">
+        <div className="rounded-lg border border-outline bg-surface p-6">
           <h2 className="font-display text-lg text-foreground">Nómina por departamento</h2>
           <p className="mt-0.5 text-xs text-foreground-muted">Solo empleados activos</p>
           <div className="mt-5" style={{ height: Math.max(payrollChartData.length * 44, 160) }}>
@@ -182,10 +182,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-lg border border-subtle bg-surface">
+      <div className="mt-8 overflow-x-auto rounded-lg border border-outline bg-surface">
         <table className="w-full tabular-nums min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-foreground-muted">
+            <tr className="border-b border-ink/60 bg-muted/60 text-left text-xs font-medium text-foreground-muted">
               <th className="px-5 py-3 font-normal">Departamento</th>
               <th className="px-5 py-3 font-normal">Total</th>
               <th className="px-5 py-3 font-normal">Activos</th>

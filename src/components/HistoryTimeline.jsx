@@ -21,7 +21,7 @@ const historyMeta = {
 // Bitácora de cambios de un empleado; la usan el detalle (RH) y el portal del empleado.
 export default function HistoryTimeline({ history, subtitle }) {
   return (
-    <div className="mt-6 rounded-lg border border-subtle bg-surface p-6">
+    <div className="mt-6 rounded-lg border border-outline bg-surface p-6">
       <h2 className="font-display text-lg text-foreground">Historial</h2>
       <p className="mt-0.5 text-xs text-foreground-muted">{subtitle}</p>
 

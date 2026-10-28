@@ -5,7 +5,7 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
 
   return (
     <Modal onClose={onCancel}>
-      <div className="w-full max-w-sm rounded-lg border border-subtle bg-surface p-6 shadow-xl">
+      <div className="w-full max-w-sm rounded-lg border border-outline bg-surface p-6 shadow-xl">
         <h3 className="font-display text-lg text-foreground">{title}</h3>
         <p className="mt-2 text-sm text-foreground-muted">{message}</p>
         <div className="mt-6 flex justify-end gap-3">

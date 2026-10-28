@@ -71,14 +71,14 @@ export default function EmployeeDetailPage() {
         </Loading>
       ) : (
       <>
-      <div className="rounded-lg border border-subtle bg-surface p-6">
+      <div className="rounded-lg border border-outline bg-surface p-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="font-display text-2xl text-foreground">{employee.fullName}</h1>
             <p className="mt-1 text-sm text-foreground-muted">{employee.position} · {employee.departmentName}</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className={`rounded-full px-2.5 py-1 text-xs ${employee.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
+            <span className={`rounded px-2 py-0.5 font-medium text-xs ${employee.isActive ? 'bg-success/15 text-success-ink' : 'bg-subtle text-foreground-muted'}`}>
               {employee.isActive ? 'Activo' : 'Inactivo'}
             </span>
             {isAdmin && (
