@@ -43,7 +43,7 @@ Interfaz web para administrar empleados y departamentos: login con roles, búsqu
 ### Inicio de sesión
 
 <p align="center">
-  <img src="docs/images/login.png" width="600" alt="Inicio de sesión con panel de marca, estado del servidor y cuentas de demostración">
+  <img src="docs/images/login.png" width="600" alt="Inicio de sesión como documento institucional: membrete, sello guilloché, casillas de formulario y talón con credenciales de demostración">
 </p>
 
 ### Dashboard
