@@ -1,17 +1,18 @@
 import { useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookUser, AlertCircle, Eye, EyeOff, RotateCcw } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, RotateCcw, LogIn } from 'lucide-react';
 import { homePathFor } from '../utils/labels';
 import { useAuth } from '../context/AuthContext';
 import useServerStatus from '../hooks/useServerStatus';
 import Spinner from '../components/Spinner';
-import { Seal, EngravedBackground } from '../components/Guilloche';
+import { Seal, SecurityBand, EngravedBackground } from '../components/Guilloche';
 import { getErrorMessage } from '../utils/errors';
 import { isTransient } from '../api/retry';
 
+// Acceso de un clic para quien revisa la demo: no tiene que copiar usuario ni contraseña.
 const demoAccounts = [
-  { role: 'Recursos Humanos', scope: 'Administra personal, solicitudes y usuarios', username: 'adminprueba', password: '123_Prueba' },
-  { role: 'Empleado', scope: 'Consulta su expediente y pide vacaciones', username: 'usuariolector', password: 'lector_123' },
+  { id: 'rh', role: 'Recursos Humanos', scope: 'Administra personal, solicitudes y usuarios', username: 'adminprueba', password: '123_Prueba' },
+  { id: 'empleado', role: 'Empleado', scope: 'Consulta su expediente y pide vacaciones', username: 'usuariolector', password: 'lector_123' },
 ];
 
 export default function LoginPage() {
@@ -22,21 +23,21 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [retry, setRetry] = useState(null); // { attempt, attempts } mientras se reintenta
+  const [error, setError] = useState(null);     // { source, message }
+  const [pending, setPending] = useState(null); // 'form' | id de la cuenta demo
+  const [retry, setRetry] = useState(null);     // { attempt, attempts } mientras se reintenta
   const abortRef = useRef(null);
-  const submitRef = useRef(null);
+  const loading = pending !== null;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError('');
+  // Compartido por el formulario y por los botones de demostración (mismos reintentos y errores).
+  async function signIn(user, pass, source) {
+    setError(null);
     setRetry(null);
-    setLoading(true);
+    setPending(source);
     const controller = new AbortController();
     abortRef.current = controller;
     try {
-      const sessionUser = await login(username, password, {
+      const sessionUser = await login(user, pass, {
         signal: controller.signal,
         onRetry: ({ attempt, attempts }) => setRetry({ attempt, attempts }),
       });
@@ -44,146 +45,141 @@ export default function LoginPage() {
       navigate(target, { replace: true });
     } catch (err) {
       if (err?.code === 'ERR_CANCELED') return; // la persona canceló: sin mensaje de error
-      setError(isTransient(err)
-        ? 'El servidor no respondió después de varios intentos. Puede seguir arrancando: espera unos segundos y vuelve a intentarlo.'
-        : getErrorMessage(err, 'Usuario o contraseña incorrectos'));
+      setError({
+        source,
+        message: isTransient(err)
+          ? 'El servidor no respondió después de varios intentos. Puede seguir arrancando: espera unos segundos y vuelve a intentarlo.'
+          : getErrorMessage(err, 'Usuario o contraseña incorrectos'),
+      });
       if (isTransient(err)) server.recheck();
     } finally {
-      setLoading(false);
+      setPending(null);
       setRetry(null);
     }
   }
 
-  function fillDemo(account) {
-    setUsername(account.username);
-    setPassword(account.password);
-    setError('');
-    submitRef.current?.focus();
+  function handleSubmit(e) {
+    e.preventDefault();
+    signIn(username, password, 'form');
   }
+
+  const progress = retry ? `Conectando (intento ${retry.attempt} de ${retry.attempts})` : 'Entrando…';
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-ink px-4 py-10 sm:px-8 sm:py-16">
       <EngravedBackground className="pointer-events-none absolute inset-0 h-full w-full" />
 
-      {/* La hoja: un documento con doble filete, no una tarjeta. En escritorio se corre a la izquierda
-          para dejar el sello sobre el espacio libre. */}
       <div className="relative mx-auto w-full max-w-[30rem]">
-        <Seal className="absolute -right-2 -top-8 z-10 h-20 w-20 rotate-[-12deg] drop-shadow-[0_6px_14px_rgba(6,22,16,0.45)] sm:-right-14 sm:-top-14 sm:h-40 sm:w-40 lg:-right-20 lg:-top-16 lg:h-48 lg:w-48" />
-
+        {/* La hoja: un documento con doble filete, no una tarjeta. */}
         <main className="relative rounded-[3px] bg-surface p-2 shadow-[0_30px_60px_-20px_rgba(6,22,16,0.7)]">
           <div className="rounded-[2px] border border-outline p-1">
-            <div className="rounded-[1px] border-2 border-ink/80 px-6 pb-6 pt-7 sm:px-9 sm:pt-9">
-              {/* Membrete */}
-              <header className="flex items-center gap-3 pr-12 sm:pr-20">
-                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[3px] bg-ink text-white">
-                  <BookUser className="h-5 w-5" strokeWidth={1.6} aria-hidden="true" />
-                </span>
-                <div>
-                  <p className="font-display text-base leading-tight text-ink sm:text-xl">Gestor de Empleados</p>
-                  <p className="text-xs text-foreground-muted">Sistema de Recursos Humanos</p>
-                </div>
-              </header>
-              <div className="mt-6 border-t border-ink/80" />
-              <div className="mt-[3px] border-t border-outline" />
+            <div className="overflow-hidden rounded-[1px] border-2 border-ink/80">
+              {/* Banda de seguridad del documento, como la de un cheque o un título. */}
+              <div className="border-b border-outline bg-primary/[0.035] px-3 py-1.5">
+                <SecurityBand className="block h-7 w-full" />
+              </div>
 
-              <h1 className="mt-7 font-display text-[2rem] leading-tight text-ink">Acceso al sistema</h1>
-              <p className="mt-2 max-w-[34ch] text-sm leading-6 text-foreground-muted">
-                Para el personal de Recursos Humanos y para cada empleado con su propio portal.
-              </p>
-
-              <form onSubmit={handleSubmit} className="mt-7">
-                {/* Casillas de formulario oficial: la etiqueta vive dentro del recuadro. */}
-                <div className="divide-y divide-outline border border-outline focus-within:border-primary">
-                  <label className="block px-3.5 pb-2 pt-2.5 focus-within:bg-primary/[0.04] focus-within:shadow-[inset_3px_0_0_theme(colors.primary.DEFAULT)]">
-                    <span className="block text-xs text-foreground-muted">Usuario</span>
-                    <input
-                      id="username" type="text" required autoFocus autoComplete="username"
-                      value={username} onChange={(e) => setUsername(e.target.value)}
-                      className="mt-0.5 w-full bg-transparent text-[15px] text-ink outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                    />
-                  </label>
-                  <label className="relative block px-3.5 pb-2 pt-2.5 focus-within:bg-primary/[0.04] focus-within:shadow-[inset_3px_0_0_theme(colors.primary.DEFAULT)]">
-                    <span className="block text-xs text-foreground-muted">Contraseña</span>
-                    <input
-                      id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
-                      value={password} onChange={(e) => setPassword(e.target.value)}
-                      className="mt-0.5 w-full bg-transparent pr-10 text-[15px] text-ink outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                      aria-pressed={showPassword}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[3px] p-2 text-foreground-muted transition hover:text-ink"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" strokeWidth={1.6} /> : <Eye className="h-4 w-4" strokeWidth={1.6} />}
-                    </button>
-                  </label>
-                </div>
-
-                {error && (
-                  <div role="alert" className="mt-4 flex items-start gap-2 border-l-2 border-danger-strong bg-danger/[0.07] px-3 py-2.5 text-sm text-danger-strong">
-                    <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                    <span>{error}</span>
+              <div className="px-6 pb-6 pt-6 sm:px-9 sm:pt-7">
+                {/* Membrete */}
+                <header className="flex items-center gap-3">
+                  <Seal compact className="h-11 w-11 flex-shrink-0" />
+                  <div>
+                    <p className="font-display text-lg leading-tight text-ink sm:text-xl">Gestor de Empleados</p>
+                    <p className="text-xs text-foreground-muted">Sistema de Recursos Humanos</p>
                   </div>
-                )}
+                </header>
+                <div className="mt-5 border-t border-ink/80" />
+                <div className="mt-[3px] border-t border-outline" />
 
-                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <button
-                    ref={submitRef}
-                    type="submit" disabled={loading}
-                    className="flex items-center justify-center gap-2 rounded-[3px] bg-primary px-7 py-3 text-sm font-medium text-white transition hover:bg-primary-strong disabled:cursor-wait disabled:hover:bg-primary"
-                  >
-                    {loading && <Spinner size={15} />}
-                    {!loading ? 'Entrar' : retry ? `Conectando (intento ${retry.attempt} de ${retry.attempts})` : 'Entrando…'}
-                  </button>
-                  {retry && (
-                    <button type="button" onClick={() => abortRef.current?.abort()} className="text-sm text-foreground-muted underline underline-offset-4 hover:text-ink">
-                      Cancelar
+                <h1 className="mt-7 font-display text-[2rem] leading-tight text-ink">Acceso al sistema</h1>
+                <p className="mt-2 max-w-[34ch] text-sm leading-6 text-foreground-muted">
+                  Para el personal de Recursos Humanos y para cada empleado con su propio portal.
+                </p>
+
+                <form onSubmit={handleSubmit} className="mt-7">
+                  {/* Casillas de formulario oficial: la etiqueta vive dentro del recuadro. */}
+                  <div className="divide-y divide-outline border border-outline focus-within:border-primary">
+                    <label className="block px-3.5 pb-2 pt-2.5 focus-within:bg-primary/[0.04] focus-within:shadow-[inset_3px_0_0_theme(colors.primary.DEFAULT)]">
+                      <span className="block text-xs text-foreground-muted">Usuario</span>
+                      <input
+                        id="username" type="text" required autoComplete="username"
+                        value={username} onChange={(e) => setUsername(e.target.value)}
+                        className="mt-0.5 w-full bg-transparent text-[15px] text-ink outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                      />
+                    </label>
+                    <label className="relative block px-3.5 pb-2 pt-2.5 focus-within:bg-primary/[0.04] focus-within:shadow-[inset_3px_0_0_theme(colors.primary.DEFAULT)]">
+                      <span className="block text-xs text-foreground-muted">Contraseña</span>
+                      <input
+                        id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
+                        value={password} onChange={(e) => setPassword(e.target.value)}
+                        className="mt-0.5 w-full bg-transparent pr-10 text-[15px] text-ink outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        aria-pressed={showPassword}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[3px] p-2 text-foreground-muted transition hover:text-ink"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" strokeWidth={1.6} /> : <Eye className="h-4 w-4" strokeWidth={1.6} />}
+                      </button>
+                    </label>
+                  </div>
+
+                  {error?.source === 'form' && <ErrorNote message={error.message} />}
+
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <button
+                      type="submit" disabled={loading}
+                      className="flex items-center justify-center gap-2 rounded-[3px] bg-primary px-7 py-3 text-sm font-medium text-white transition hover:bg-primary-strong disabled:cursor-wait disabled:hover:bg-primary"
+                    >
+                      {pending === 'form' && <Spinner size={15} />}
+                      {pending === 'form' ? progress : 'Entrar'}
                     </button>
+                    {pending === 'form' && retry && <CancelButton onCancel={() => abortRef.current?.abort()} />}
+                    {!retry && <ServerStatus status={server.status} onRecheck={server.recheck} />}
+                  </div>
+                  {server.status === 'waking' && !retry && (
+                    <p className="mt-3 text-xs leading-5 text-foreground-muted">
+                      La demo usa un plan gratuito que se suspende sin uso; la primera conexión puede tardar hasta un minuto.
+                    </p>
                   )}
-                  {!retry && <ServerStatus status={server.status} onRecheck={server.recheck} />}
-                </div>
-                {server.status === 'waking' && !retry && (
-                  <p className="mt-3 text-xs leading-5 text-foreground-muted">
-                    La demo usa un plan gratuito que se suspende sin uso; la primera conexión puede tardar hasta un minuto.
-                    Puedes escribir tus datos mientras tanto.
-                  </p>
-                )}
-              </form>
+                </form>
 
-              {/* Talón desprendible con las credenciales de prueba. */}
-              <section aria-labelledby="demo-title" className="mt-8">
-                <div className="relative -mx-6 sm:-mx-9" aria-hidden="true">
-                  <div className="border-t-2 border-dashed border-outline" />
-                  <span className="absolute -left-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-ink" />
-                  <span className="absolute -right-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-ink" />
-                </div>
-                <h2 id="demo-title" className="mt-6 font-display text-lg text-ink">Credenciales de demostración</h2>
-                <p className="mt-1 text-xs text-foreground-muted">Datos ficticios. Elige una cuenta para rellenar el acceso.</p>
-                <ul className="mt-4 divide-y divide-outline border-y border-outline text-sm">
-                  {demoAccounts.map((account) => (
-                    <li key={account.username} className="flex items-start justify-between gap-4 py-3.5">
-                      <div className="min-w-0">
-                        <p className="font-medium text-ink">{account.role}</p>
-                        <p className="text-xs leading-5 text-foreground-muted">{account.scope}</p>
-                        <dl className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs">
-                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Usuario</dt><dd className="text-ink">{account.username}</dd></div>
-                          <div className="flex gap-1.5"><dt className="text-foreground-muted">Contraseña</dt><dd className="text-ink">{account.password}</dd></div>
-                        </dl>
-                      </div>
-                          <button
-                            type="button"
-                            onClick={() => fillDemo(account)}
-                            aria-label={`Usar la cuenta de ${account.role}`}
-                            className="rounded-[3px] border border-ink/70 px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-ink hover:text-white"
-                          >
-                            Usar
-                          </button>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+                {/* Talón desprendible: acceso de un clic a la demostración. */}
+                <section aria-labelledby="demo-title" className="mt-8">
+                  <div className="relative -mx-6 sm:-mx-9" aria-hidden="true">
+                    <div className="border-t-2 border-dashed border-outline" />
+                    <span className="absolute -left-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-ink" />
+                    <span className="absolute -right-[7px] -top-[7px] h-3.5 w-3.5 rounded-full bg-ink" />
+                  </div>
+                  <h2 id="demo-title" className="mt-6 font-display text-lg text-ink">Explorar la demostración</h2>
+                  <p className="mt-1 text-xs text-foreground-muted">Entra con una cuenta de prueba, sin escribir credenciales. Los datos son ficticios.</p>
+                  <div className="mt-4 grid gap-2.5">
+                    {demoAccounts.map((account) => (
+                      <button
+                        key={account.id}
+                        type="button"
+                        disabled={loading}
+                        onClick={() => signIn(account.username, account.password, account.id)}
+                        className="group flex items-start gap-3 rounded-[3px] border border-ink/70 px-3.5 py-3 text-left transition hover:bg-ink hover:text-white disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-transparent disabled:hover:text-current"
+                      >
+                        {pending === account.id
+                          ? <span className="mt-0.5 text-ink group-hover:text-white"><Spinner size={16} /></span>
+                          : <LogIn className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary group-hover:text-white" strokeWidth={1.75} aria-hidden="true" />}
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium text-ink group-hover:text-white">
+                            {pending === account.id ? progress : `Entrar como ${account.role}`}
+                          </span>
+                          <span className="mt-0.5 block text-xs leading-5 text-foreground-muted group-hover:text-white/80">{account.scope}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  {pending && pending !== 'form' && retry && <div className="mt-3"><CancelButton onCancel={() => abortRef.current?.abort()} /></div>}
+                  {error && error.source !== 'form' && <ErrorNote message={error.message} />}
+                </section>
+              </div>
             </div>
           </div>
         </main>
@@ -191,6 +187,23 @@ export default function LoginPage() {
         <p className="mt-5 text-center text-xs text-white/75">Acceso para personal autorizado. Proyecto de portafolio con datos ficticios.</p>
       </div>
     </div>
+  );
+}
+
+function ErrorNote({ message }) {
+  return (
+    <div role="alert" className="mt-4 flex items-start gap-2 border-l-2 border-danger-strong bg-danger/[0.07] px-3 py-2.5 text-sm text-danger-strong">
+      <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
+      <span>{message}</span>
+    </div>
+  );
+}
+
+function CancelButton({ onCancel }) {
+  return (
+    <button type="button" onClick={onCancel} className="text-sm text-foreground-muted underline underline-offset-4 hover:text-ink">
+      Cancelar
+    </button>
   );
 }
 

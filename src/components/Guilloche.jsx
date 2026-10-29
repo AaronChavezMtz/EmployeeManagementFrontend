@@ -66,6 +66,32 @@ export function Seal({ className = '', compact = false }) {
   );
 }
 
+// Banda de seguridad: el "cordón" de un cheque o un título. Ondas desfasadas que se entrelazan
+// (dos familias con periodos distintos para que el cruce no se repita en bloques idénticos).
+const BAND_WIDTH = 480;
+const BAND_HEIGHT = 34;
+const BAND_PATHS = [
+  ...Array.from({ length: 7 }, (_, k) => ({ period: 40, amp: 12, phase: (k * Math.PI) / 7 })),
+  ...Array.from({ length: 5 }, (_, k) => ({ period: 96, amp: 7, phase: (k * 2 * Math.PI) / 5 })),
+].map(({ period, amp, phase }) => {
+  let d = '';
+  for (let x = 0; x <= BAND_WIDTH; x += 2) {
+    const y = BAND_HEIGHT / 2 + amp * Math.sin((2 * Math.PI * x) / period + phase);
+    d += `${x === 0 ? 'M' : 'L'}${x},${y.toFixed(2)}`;
+  }
+  return d;
+});
+
+export function SecurityBand({ className = '' }) {
+  return (
+    <svg viewBox={`0 0 ${BAND_WIDTH} ${BAND_HEIGHT}`} preserveAspectRatio="none" className={className} aria-hidden="true" focusable="false">
+      {BAND_PATHS.map((d, i) => (
+        <path key={i} d={d} fill="none" stroke={colors.primary.strong} strokeWidth="0.5" opacity="0.7" vectorEffect="non-scaling-stroke" />
+      ))}
+    </svg>
+  );
+}
+
 // Fondo de líneas onduladas, como el de un billete o un título.
 export function EngravedBackground({ className = '' }) {
   return (
